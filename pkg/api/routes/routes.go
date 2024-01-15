@@ -47,5 +47,6 @@ func setupUserRoutes(c *controller.UserController, router *gin.Engine) {
 	{
 		userService.POST("/register", c.RegisterUser)
 		userService.POST("/login", c.LoginUser)
+		userService.GET("/:username", c.GetUserByUserName)
 	}
 }

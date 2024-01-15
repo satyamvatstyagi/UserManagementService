@@ -66,3 +66,21 @@ func (u *userUsecase) LoginUser(loginUserRequest *domain.LoginUserRequest) (*dom
 		Token: token,
 	}, nil
 }
+
+func (u *userUsecase) GetUserByUserName(getUserByUserNameRequest *domain.GetUserByUserNameRequest) (*domain.GetUserByUserNameResponse, error) {
+	// Remove the space from the username
+	getUserByUserNameRequest.UserName = html.EscapeString(strings.TrimSpace(getUserByUserNameRequest.UserName))
+
+	// Call the repository
+	user, err := u.userRepository.GetUserByUserName(getUserByUserNameRequest.UserName)
+	if err != nil {
+		return nil, err
+	}
+
+	return &domain.GetUserByUserNameResponse{
+		ID:        user.UUID.String(),
+		UserName:  user.UserName,
+		CreatedAt: user.CreatedAt.String(),
+		UpdatedAt: user.UpdatedAt.String(),
+	}, nil
+}
