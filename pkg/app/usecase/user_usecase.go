@@ -1,22 +1,32 @@
 package usecase
 
 import (
+	"bytes"
+	"encoding/base64"
+	"encoding/json"
+	"fmt"
 	"html"
+	"log"
+	"net/http"
+	"os"
 	"strings"
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type userUsecase struct {
 	userRepository models.UserRepository
+	httpClient     restclient.HTTPClient
 }
 
-func NewUserUsecase(userRepository models.UserRepository) domain.UserUsecase {
+func NewUserUsecase(userRepository models.UserRepository, hc restclient.HTTPClient) domain.UserUsecase {
 	return &userUsecase{
 		userRepository: userRepository,
+		httpClient:     hc,
 	}
 }
 
@@ -83,4 +93,78 @@ func (u *userUsecase) GetUserByUserName(getUserByUserNameRequest *domain.GetUser
 		CreatedAt: user.CreatedAt.String(),
 		UpdatedAt: user.UpdatedAt.String(),
 	}, nil
+}
+
+// Function to send request to http client server
+func (u *userUsecase) SendRequestToServer(url string, requestJson []byte) (response []byte, err error) {
+	// Create the request
+	req, err := http.NewRequest(http.MethodGet, url, bytes.NewBuffer(requestJson))
+	if err != nil {
+		return nil, err
+	}
+
+	// Set the headers
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("Accept", "application/json")
+
+	// Get the basic auth credentials from the env variables
+	username := os.Getenv("BASIC_AUTH_USER")
+	password := os.Getenv("BASIC_AUTH_PASSWORD")
+
+	// Encode the credentials
+	auth := username + ":" + password
+	encodedAuth := base64.StdEncoding.EncodeToString([]byte(auth))
+
+	// Set the Authorization header
+	req.Header.Set("Authorization", "Basic "+encodedAuth)
+
+	// Call the http client
+	res, err := u.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	// Check if the status code is 200
+	if res.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("recieved %d code from client", res.StatusCode)
+	}
+
+	// Read the response
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(res.Body)
+	if err != nil {
+		log.Println(err)
+		return nil, err
+	}
+
+	// Convert the response to bytes
+	response = buf.Bytes()
+
+	return response, nil
+}
+
+func (u *userUsecase) GetOrderByOrderUserName(getOrderByOrderUserNameRequest *domain.GetOrderByOrderUserNameRequest) (*domain.GetOrderByOrderUserNameResponse, error) {
+	// Remove the space from the username
+	getOrderByOrderUserNameRequest.UserName = html.EscapeString(strings.TrimSpace(getOrderByOrderUserNameRequest.UserName))
+
+	// Check if the user exists
+	user, err := u.userRepository.GetUserByUserName(getOrderByOrderUserNameRequest.UserName)
+	if err != nil {
+		return nil, err
+	}
+
+	// Call send request to server
+	response, err := u.SendRequestToServer("http://localhost:8081/order/"+user.UserName, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	// Convert the response to struct
+	var orderResponse domain.GetOrderByOrderUserNameResponse
+	err = json.Unmarshal(response, &orderResponse)
+	if err != nil {
+		return nil, err
+	}
+
+	return &orderResponse, nil
 }

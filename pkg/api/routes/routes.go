@@ -2,6 +2,7 @@ package routes
 
 import (
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/gin-gonic/gin"
@@ -9,6 +10,8 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/config"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/repository"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/usecase"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
 )
 
 func Setup() {
@@ -21,8 +24,11 @@ func Setup() {
 	// Initialize the repositories
 	userRepository := repository.NewUserRepository(db)
 
+	httpClient := &http.Client{Timeout: consts.MaxTimeout}
+	restHTTPClient := restclient.NewHTTPClient(httpClient)
+
 	// Initialize the usecases
-	userUsecase := usecase.NewUserUsecase(userRepository)
+	userUsecase := usecase.NewUserUsecase(userRepository, restHTTPClient)
 
 	// Initialize the controller
 	userController := &controller.UserController{UserUsecase: userUsecase}
@@ -48,5 +54,6 @@ func setupUserRoutes(c *controller.UserController, router *gin.Engine) {
 		userService.POST("/register", c.RegisterUser)
 		userService.POST("/login", c.LoginUser)
 		userService.GET("/:username", c.GetUserByUserName)
+		userService.GET("/:username/order", c.GetOrderByOrderUserName)
 	}
 }

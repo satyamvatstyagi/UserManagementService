@@ -66,3 +66,21 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "User Fetched Successfully", "data": res})
 }
+
+func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
+	var req domain.GetOrderByOrderUserNameRequest
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid Request"})
+		return
+	}
+
+	// Call the usecase
+	res, err := c.UserUsecase.GetOrderByOrderUserName(&req)
+	if err != nil {
+		log.Println(err)
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"message": "Order Fetched Successfully", "data": res})
+}
