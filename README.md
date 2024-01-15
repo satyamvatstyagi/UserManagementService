@@ -46,24 +46,23 @@ To use the User Management Service in your application, you can make API request
 
 - Register a new user:
     ```http
-    POST /api/users/register
+    POST /user/register
     Content-Type: application/json
 
     {
-        "name": "John Doe",
-        "email": "johndoe@example.com",
-        "password": "password123"
+       "user_name":"satyamvats3",
+       "password":"password"
     }
     ```
 
 - Login:
     ```http
-    POST /api/users/login
+    POST /user/login
     Content-Type: application/json
 
     {
-        "email": "johndoe@example.com",
-        "password": "password123"
+        "user_name":"satyamvats3",
+        "password":"password"
     }
     ```
 
