@@ -15,3 +15,8 @@ type User struct {
 	CreatedAt time.Time `gorm:"not null;"`
 	UpdatedAt time.Time `gorm:"not null;"`
 }
+
+type UserRepository interface {
+	RegisterUser(userID string, password string) (string, error)
+	GetUserByUserName(userName string) (*User, error)
+}

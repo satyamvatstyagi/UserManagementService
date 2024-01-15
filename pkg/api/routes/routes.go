@@ -5,7 +5,10 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/satyamvatstyagi/ELKTestService1/pkg/api/controller"
 	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/config"
+	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/repository"
+	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/usecase"
 )
 
 func Setup() {
@@ -13,16 +16,36 @@ func Setup() {
 	cfg := config.Config{}
 
 	// Initialize the database
-	cfg.InitDb()
+	db := cfg.InitDb()
+
+	// Initialize the repositories
+	userRepository := repository.NewUserRepository(db)
+
+	// Initialize the usecases
+	userUsecase := usecase.NewUserUsecase(userRepository)
+
+	// Initialize the controller
+	userController := &controller.UserController{UserUsecase: userUsecase}
 
 	ginMode := os.Getenv("GIN_MODE")
 	gin.SetMode(ginMode)
 	router := gin.Default()
 
 	// Setup the routes
+	setupUserRoutes(userController, router)
 
 	err := router.Run(":8080")
 	if err != nil {
 		log.Fatal(err)
+	}
+}
+
+func setupUserRoutes(c *controller.UserController, router *gin.Engine) {
+	username := os.Getenv("BASIC_AUTH_USER")
+	password := os.Getenv("BASIC_AUTH_PASSWORD")
+	userService := router.Group("/user", gin.BasicAuth(gin.Accounts{username: password}))
+	{
+		userService.POST("/register", c.RegisterUser)
+		userService.POST("/login", c.LoginUser)
 	}
 }
