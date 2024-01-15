@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/joho/godotenv"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/api/routes"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/api/routes"
 )
 
 func main() {

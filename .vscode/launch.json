@@ -9,7 +9,7 @@
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "/Users/satyamvats/Documents/IOCO/POC/ELKTestService1/cmd/server/main.go",
+            "program": "/Users/satyamvats/Documents/IOCO/POC/UserManagementService/cmd/server/main.go",
             "cwd": "${workspaceFolder}",
             "env": {},
             "args": []

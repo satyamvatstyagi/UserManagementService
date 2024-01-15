@@ -5,10 +5,10 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/api/controller"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/config"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/repository"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/usecase"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/api/controller"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/config"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/repository"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/usecase"
 )
 
 func Setup() {

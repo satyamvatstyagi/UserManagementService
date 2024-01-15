@@ -1,4 +1,4 @@
-module github.com/satyamvatstyagi/ELKTestService1
+module github.com/satyamvatstyagi/UserManagementService
 
 go 1.20
 

@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/common/jwt"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 )
 
 // Function to ValidateToken takes the jwt token from the request header and checks the validity of the token

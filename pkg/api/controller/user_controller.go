@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/domain"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/common/cerr"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 )
 
 type UserController struct {

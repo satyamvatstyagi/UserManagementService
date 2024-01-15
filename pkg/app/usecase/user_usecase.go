@@ -4,9 +4,9 @@ import (
 	"html"
 	"strings"
 
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/domain"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/models"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/common/jwt"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 	"golang.org/x/crypto/bcrypt"
 )
 

@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/app/models"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/common/cerr"
-	"github.com/satyamvatstyagi/ELKTestService1/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
 	"gorm.io/gorm"
 )
 
