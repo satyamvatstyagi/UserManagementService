@@ -18,6 +18,10 @@ func Setup() {
 
 	cfg := config.Config{}
 
+	// Initialize the logger
+	logger := cfg.InitLogger()
+	logger.Info(map[string]interface{}{"message": "Logger Initialized"})
+
 	// Initialize the database
 	db := cfg.InitDb()
 

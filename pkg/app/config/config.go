@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -46,4 +47,41 @@ func DropUnusedColumns(db *gorm.DB, models ...interface{}) {
 			}
 		}
 	}
+}
+
+// Function to initialize the logger
+func (c *Config) InitLogger() *logger.MtnLogger {
+	fileName := os.Getenv("LOG_FILE_NAME")
+
+	// If the LOG_FILE_NAME environment variable is not set, set it to "app.log"
+	if fileName == "" {
+		fileName = "app.log"
+	}
+
+	// Check if "log" directory exists in the current directory
+	if _, err := os.Stat("log"); os.IsNotExist(err) {
+		// Create the directory
+		err := os.Mkdir("log", 0755)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	// Check if the file exists in the "log" directory
+	filePath := "log/" + fileName
+	if _, err := os.Stat(filePath); os.IsNotExist(err) {
+		// Create the file
+		file, err := os.Create(filePath)
+		if err != nil {
+			log.Fatal(err)
+		}
+		file.Close()
+	}
+	
+	logger, err := logger.NewMtnLogger(filePath)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return logger
 }
