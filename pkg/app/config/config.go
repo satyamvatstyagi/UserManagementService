@@ -1,10 +1,10 @@
 package config
 
 import (
-	"log"
 	"os"
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -16,7 +16,7 @@ func (c *Config) InitDb() *gorm.DB {
 	db, err := gorm.Open(postgres.Open(dsn))
 
 	if err != nil {
-		log.Fatal(err)
+		logger.Log().Fatal(err.Error())
 	}
 
 	db.AutoMigrate(&models.User{})
