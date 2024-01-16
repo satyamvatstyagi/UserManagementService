@@ -10,9 +10,12 @@ import (
 // Logger defines the interface for a custom logger
 type Logger interface {
 	Log(level logrus.Level, message string, fields map[string]interface{})
-	Info(fields map[string]interface{})
-	Warning(fields map[string]interface{})
-	Error(fields map[string]interface{})
+	Info(message string, fields map[string]interface{})
+	Warning(message string, fields map[string]interface{})
+	Error(message string, fields map[string]interface{})
+	Debug(message string, fields map[string]interface{})
+	Fatal(message string, fields map[string]interface{})
+	Panic(message string, fields map[string]interface{})
 }
 
 // MtnLogger is an implementation of Logger that logs to a file
@@ -57,16 +60,31 @@ func (mtn *MtnLogger) Log(level logrus.Level, message string, fields map[string]
 }
 
 // Info logs messages with Info level and additional fields
-func (mtn *MtnLogger) Info(fields map[string]interface{}) {
-	mtn.Log(logrus.InfoLevel, "", fields)
+func (mtn *MtnLogger) Info(message string, fields map[string]interface{}) {
+	mtn.Log(logrus.InfoLevel, message, fields)
 }
 
 // Warning logs messages with Warning level and additional fields
-func (mtn *MtnLogger) Warning(fields map[string]interface{}) {
-	mtn.Log(logrus.WarnLevel, "", fields)
+func (mtn *MtnLogger) Warning(message string, fields map[string]interface{}) {
+	mtn.Log(logrus.WarnLevel, message, fields)
 }
 
 // Error logs messages with Error level and additional fields
-func (mtn *MtnLogger) Error(fields map[string]interface{}) {
-	mtn.Log(logrus.ErrorLevel, "", fields)
+func (mtn *MtnLogger) Error(message string, fields map[string]interface{}) {
+	mtn.Log(logrus.ErrorLevel, message, fields)
+}
+
+// Debug logs messages with Debug level and additional fields
+func (mtn *MtnLogger) Debug(message string, fields map[string]interface{}) {
+	mtn.Log(logrus.DebugLevel, message, fields)
+}
+
+// Fatal logs messages with Fatal level and additional fields
+func (mtn *MtnLogger) Fatal(message string, fields map[string]interface{}) {
+	mtn.Log(logrus.FatalLevel, message, fields)
+}
+
+// Panic logs messages with Panic level and additional fields
+func (mtn *MtnLogger) Panic(message string, fields map[string]interface{}) {
+	mtn.Log(logrus.PanicLevel, message, fields)
 }

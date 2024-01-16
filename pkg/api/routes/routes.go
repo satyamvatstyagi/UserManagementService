@@ -22,7 +22,6 @@ func Setup() {
 
 	// Initialize the logger
 	logger := cfg.InitLogger()
-	logger.Debug(map[string]interface{}{"message": "Logger Initialized"})
 
 	// Initialize the database
 	db := cfg.InitDb()

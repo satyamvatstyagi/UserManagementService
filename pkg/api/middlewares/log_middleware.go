@@ -15,16 +15,17 @@ func LoggingMiddleware(logger l.Logger) gin.HandlerFunc {
 		c.Next()
 
 		fields := map[string]interface{}{
-			"endpoint": c.Request.URL.Path,
-			"method":   c.Request.Method,
+			"endpoint":    c.Request.URL.Path,
+			"method":      c.Request.Method,
+			"countryISO2": c.Request.Header.Get("countryISO2"),
+			"userType":    c.Request.Header.Get("userType"),
 		}
 
 		if swriter.status >= 400 {
 			fields["error"] = fmt.Sprintf("Inbound request failed with status %d", swriter.status)
-			logger.Error(fields)
+			logger.Error("", fields)
 		} else {
-			fields["message"] = "Inbound request successful"
-			logger.Info(fields)
+			logger.Info("Inbound request successful", fields)
 		}
 	}
 }
