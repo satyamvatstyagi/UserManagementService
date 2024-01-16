@@ -30,6 +30,17 @@ func NewMtnLogger(filename string) (*MtnLogger, error) {
 	logger := logrus.New()
 	logger.SetOutput(file)
 
+	// Use JSON formatter
+	logger.SetFormatter(&logrus.JSONFormatter{
+		TimestampFormat: time.RFC3339Nano,
+		FieldMap: logrus.FieldMap{
+			logrus.FieldKeyTime:  "ts",
+			logrus.FieldKeyLevel: "level",
+			logrus.FieldKeyMsg:   "msg",
+			logrus.FieldKeyFunc:  "caller",
+		},
+	})
+
 	return &MtnLogger{Logger: logger}, nil
 }
 
