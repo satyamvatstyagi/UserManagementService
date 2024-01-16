@@ -7,10 +7,12 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/api/controller"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/api/middlewares"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/config"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/repository"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/usecase"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
 )
 
@@ -20,7 +22,7 @@ func Setup() {
 
 	// Initialize the logger
 	logger := cfg.InitLogger()
-	logger.Info(map[string]interface{}{"message": "Logger Initialized"})
+	logger.Debug(map[string]interface{}{"message": "Logger Initialized"})
 
 	// Initialize the database
 	db := cfg.InitDb()
@@ -42,7 +44,7 @@ func Setup() {
 	router := gin.Default()
 
 	// Setup the routes
-	setupUserRoutes(userController, router)
+	setupUserRoutes(userController, router, logger)
 
 	err := router.Run(":8080")
 	if err != nil {
@@ -50,14 +52,14 @@ func Setup() {
 	}
 }
 
-func setupUserRoutes(c *controller.UserController, router *gin.Engine) {
+func setupUserRoutes(c *controller.UserController, router *gin.Engine, l *logger.MtnLogger) {
 	username := os.Getenv("BASIC_AUTH_USER")
 	password := os.Getenv("BASIC_AUTH_PASSWORD")
 	userService := router.Group("/user", gin.BasicAuth(gin.Accounts{username: password}))
 	{
-		userService.POST("/register", c.RegisterUser)
-		userService.POST("/login", c.LoginUser)
-		userService.GET("/:username", c.GetUserByUserName)
-		userService.GET("/:username/order", c.GetOrderByOrderUserName)
+		userService.POST("/register", middlewares.LoggingMiddleware(l), c.RegisterUser)
+		userService.POST("/login", middlewares.LoggingMiddleware(l), c.LoginUser)
+		userService.GET("/:username", middlewares.LoggingMiddleware(l), c.GetUserByUserName)
+		userService.GET("/:username/order", middlewares.LoggingMiddleware(l), c.GetOrderByOrderUserName)
 	}
 }
