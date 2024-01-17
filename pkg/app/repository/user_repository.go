@@ -1,12 +1,14 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/utils"
 	"gorm.io/gorm"
 )
 
@@ -40,7 +42,8 @@ func (u *userRepository) RegisterUser(userName string, password string) (string,
 	return user.UUID.String(), nil
 }
 
-func (u *userRepository) GetUserByUserName(userName string) (*models.User, error) {
+func (u *userRepository) GetUserByUserName(ctx context.Context, userName string) (*models.User, error) {
+	_, _ = utils.NewSpan(ctx, "GetUserByUserName", "psql")
 	var user models.User
 	if err := u.database.Where("user_name = ?", userName).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

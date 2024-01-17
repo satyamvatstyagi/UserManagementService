@@ -6,7 +6,8 @@ import (
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
-	"gorm.io/driver/postgres"
+	postgres "go.elastic.co/apm/module/apmgormv2/v2/driver/postgres"
+
 	"gorm.io/gorm"
 )
 
@@ -15,11 +16,9 @@ type Config struct{}
 func (c *Config) InitDb() *gorm.DB {
 	dsn := os.Getenv("DB_DSN")
 	db, err := gorm.Open(postgres.Open(dsn))
-
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	db.AutoMigrate(&models.User{})
 	DropUnusedColumns(db, &models.User{})
 
@@ -77,7 +76,7 @@ func (c *Config) InitLogger() *logger.MtnLogger {
 		}
 		file.Close()
 	}
-	
+
 	logger, err := logger.NewMtnLogger(filePath)
 	if err != nil {
 		log.Fatal(err)

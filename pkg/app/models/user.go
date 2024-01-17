@@ -1,6 +1,7 @@
 package models
 
 import (
+	"context"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -18,5 +19,5 @@ type User struct {
 
 type UserRepository interface {
 	RegisterUser(userID string, password string) (string, error)
-	GetUserByUserName(userName string) (*User, error)
+	GetUserByUserName(ctx context.Context, userName string) (*User, error)
 }

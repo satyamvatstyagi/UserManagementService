@@ -57,7 +57,7 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.GetUserByUserName(&req)
+	res, err := c.UserUsecase.GetUserByUserName(ctx.Request.Context(),&req)
 	if err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})

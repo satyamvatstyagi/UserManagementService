@@ -58,7 +58,7 @@ func (u *userUsecase) LoginUser(loginUserRequest *domain.LoginUserRequest) (*dom
 	loginUserRequest.UserName = html.EscapeString(strings.TrimSpace(loginUserRequest.UserName))
 
 	// Call the repository
-	user, err := u.userRepository.GetUserByUserName(loginUserRequest.UserName)
+	user, err := u.userRepository.GetUserByUserName(context.Background(), loginUserRequest.UserName)
 	if err != nil {
 		return nil, err
 	}
@@ -79,12 +79,12 @@ func (u *userUsecase) LoginUser(loginUserRequest *domain.LoginUserRequest) (*dom
 	}, nil
 }
 
-func (u *userUsecase) GetUserByUserName(getUserByUserNameRequest *domain.GetUserByUserNameRequest) (*domain.GetUserByUserNameResponse, error) {
+func (u *userUsecase) GetUserByUserName(ctx context.Context, getUserByUserNameRequest *domain.GetUserByUserNameRequest) (*domain.GetUserByUserNameResponse, error) {
 	// Remove the space from the username
 	getUserByUserNameRequest.UserName = html.EscapeString(strings.TrimSpace(getUserByUserNameRequest.UserName))
 
 	// Call the repository
-	user, err := u.userRepository.GetUserByUserName(getUserByUserNameRequest.UserName)
+	user, err := u.userRepository.GetUserByUserName(ctx, getUserByUserNameRequest.UserName)
 	if err != nil {
 		return nil, err
 	}
@@ -150,7 +150,7 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	getOrderByOrderUserNameRequest.UserName = html.EscapeString(strings.TrimSpace(getOrderByOrderUserNameRequest.UserName))
 
 	// Check if the user exists
-	user, err := u.userRepository.GetUserByUserName(getOrderByOrderUserNameRequest.UserName)
+	user, err := u.userRepository.GetUserByUserName(ctx, getOrderByOrderUserNameRequest.UserName)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	//-------------------------------------------------------------------------------------------------------------------//
 
 	resp, err := apirequest.APIRequest(ctx,
-		apirequest.RequestParams{URL: "http://localhost:8081/order/q" + user.UserName,
+		apirequest.RequestParams{URL: "http://localhost:8081/order/" + user.UserName,
 			Method: http.MethodGet,
 			Body:   nil,
 			Headers: map[string]string{"Content-Type": "application/json",
