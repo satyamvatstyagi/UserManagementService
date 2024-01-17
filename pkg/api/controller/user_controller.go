@@ -75,7 +75,7 @@ func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.GetOrderByOrderUserName(&req)
+	res, err := c.UserUsecase.GetOrderByOrderUserName(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})

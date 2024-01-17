@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"bytes"
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"fmt"
@@ -13,6 +14,7 @@ import (
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/apirequest"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
 	"golang.org/x/crypto/bcrypt"
@@ -143,7 +145,7 @@ func (u *userUsecase) SendRequestToServer(url string, requestJson []byte) (respo
 	return response, nil
 }
 
-func (u *userUsecase) GetOrderByOrderUserName(getOrderByOrderUserNameRequest *domain.GetOrderByOrderUserNameRequest) (*domain.GetOrderByOrderUserNameResponse, error) {
+func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrderUserNameRequest *domain.GetOrderByOrderUserNameRequest) (*domain.GetOrderByOrderUserNameResponse, error) {
 	// Remove the space from the username
 	getOrderByOrderUserNameRequest.UserName = html.EscapeString(strings.TrimSpace(getOrderByOrderUserNameRequest.UserName))
 
@@ -154,10 +156,31 @@ func (u *userUsecase) GetOrderByOrderUserName(getOrderByOrderUserNameRequest *do
 	}
 
 	// Call send request to server
-	response, err := u.SendRequestToServer("http://localhost:8081/order/"+user.UserName, nil)
+	// response, err := u.SendRequestToServer("http://localhost:8081/order/"+user.UserName, nil)
+	// if err != nil {
+	// 	return nil, err
+	// }
+
+	//-------------------------------------------------------------------------------------------------------------------//
+
+	resp, err := apirequest.APIRequest(ctx,
+		apirequest.RequestParams{URL: "http://localhost:8081/order/q" + user.UserName,
+			Method: http.MethodGet,
+			Body:   nil,
+			Headers: map[string]string{"Content-Type": "application/json",
+				"Accept":        "application/json",
+				"Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(os.Getenv("BASIC_AUTH_USER")+":"+os.Getenv("BASIC_AUTH_PASSWORD")))},
+			SpanName: "GetUserOrder"})
+
+	buf := new(bytes.Buffer)
+	_, err = buf.ReadFrom(resp.Body)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
+	response := buf.Bytes()
+
+	//-------------------------------------------------------------------------------------------------------------------//
 
 	// Convert the response to struct
 	var orderResponse domain.GetOrderByOrderUserNameResponse

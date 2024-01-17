@@ -1,11 +1,13 @@
 package domain
 
+import "context"
+
 type UserUsecase interface {
 	RegisterUser(registerUserRequest *RegisterUserRequest) (registerUserResponse *RegisterUserResponse, err error)
 	LoginUser(loginUserRequest *LoginUserRequest) (loginUserResponse *LoginUserResponse, err error)
 	GetUserByUserName(getUserByUserNameRequest *GetUserByUserNameRequest) (getUserByUserNameResponse *GetUserByUserNameResponse, err error)
 	SendRequestToServer(url string, requestJson []byte) (response []byte, err error)
-	GetOrderByOrderUserName(getOrderByOrderUserNameRequest *GetOrderByOrderUserNameRequest) (getOrderByOrderUserNameResponse *GetOrderByOrderUserNameResponse, err error)
+	GetOrderByOrderUserName(ctx context.Context, getOrderByOrderUserNameRequest *GetOrderByOrderUserNameRequest) (getOrderByOrderUserNameResponse *GetOrderByOrderUserNameResponse, err error)
 }
 
 type RegisterUserRequest struct {
