@@ -14,6 +14,7 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
+	"go.elastic.co/apm/module/apmgin"
 )
 
 func Setup() {
@@ -42,10 +43,13 @@ func Setup() {
 	gin.SetMode(ginMode)
 	router := gin.Default()
 
+	// Use Elastic APM middleware for Gin
+	router.Use(apmgin.Middleware(router))
+
 	// Setup the routes
 	setupUserRoutes(userController, router, logger)
 
-	err := router.Run(":8080")
+	err := router.Run(":8082")
 	if err != nil {
 		log.Fatal(err)
 	}

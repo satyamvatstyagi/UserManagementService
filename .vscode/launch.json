@@ -5,11 +5,11 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch",
+            "name": "UserManagementService",
             "type": "go",
             "request": "launch",
             "mode": "debug",
-            "program": "/Users/satyamvats/Documents/IOCO/POC/UserManagementService/cmd/server/main.go",
+            "program": "/Users/satyamvats/Documents/IOCO/POC/UserManagementService/cmd/server/",
             "cwd": "${workspaceFolder}",
             "env": {},
             "args": []
