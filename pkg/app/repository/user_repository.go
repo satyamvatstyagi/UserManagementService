@@ -24,7 +24,8 @@ func NewUserRepository(database *gorm.DB) models.UserRepository {
 }
 
 func (u *userRepository) RegisterUser(ctx context.Context, userName string, password string) (string, error) {
-	_, ctx = instrumentation.TraceAPMRequest(ctx, "RegisterUser", consts.SpanTypeQueryExecution)
+	span, ctx := instrumentation.TraceAPMRequest(ctx, "RegisterUser", consts.SpanTypeQueryExecution)
+	defer span.End()
 	db := apmgorm.WithContext(ctx, u.database)
 	localUTCTime := time.Now()
 	user := &models.User{
@@ -46,7 +47,8 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 }
 
 func (u *userRepository) GetUserByUserName(ctx context.Context, userName string) (*models.User, error) {
-	_, ctx = instrumentation.TraceAPMRequest(ctx, "GetUserByUserName", consts.SpanTypeQueryExecution)
+	span, ctx := instrumentation.TraceAPMRequest(ctx, "GetUserByUserName", consts.SpanTypeQueryExecution)
+	defer span.End()
 	db := apmgorm.WithContext(ctx, u.database)
 	var user models.User
 	if err := db.Where("user_name = ?", userName).First(&user).Error; err != nil {
