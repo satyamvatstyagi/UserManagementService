@@ -37,12 +37,14 @@ require (
 	github.com/jackc/pgtype v1.12.0 // indirect
 	github.com/jackc/pgx/v4 v4.16.1 // indirect
 	github.com/jcchavezs/porto v0.6.0 // indirect
+	github.com/jinzhu/gorm v1.9.10 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.4 // indirect
 	github.com/leodido/go-urn v1.2.4 // indirect
+	github.com/lib/pq v1.10.2 // indirect
 	github.com/mattn/go-isatty v0.0.19 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect
@@ -55,6 +57,7 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	go.elastic.co/apm v1.15.0 // indirect
 	go.elastic.co/apm/module/apmgin/v2 v2.4.8 // indirect
+	go.elastic.co/apm/module/apmgorm/v2 v2.4.8 // indirect
 	go.elastic.co/apm/module/apmgormv2/v2 v2.4.8 // indirect
 	go.elastic.co/apm/module/apmhttp v1.15.0 // indirect
 	go.elastic.co/apm/module/apmhttp/v2 v2.4.8 // indirect

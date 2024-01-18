@@ -14,7 +14,7 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
-	"go.elastic.co/apm/module/apmgin"
+	"go.elastic.co/apm/module/apmgin/v2"
 )
 
 func Setup() {

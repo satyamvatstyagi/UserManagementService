@@ -5,11 +5,12 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/jinzhu/gorm"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/instrumentation"
-	"gorm.io/gorm"
+	"go.elastic.co/apm/module/apmgorm/v2"
 )
 
 type userRepository struct {
@@ -23,9 +24,8 @@ func NewUserRepository(database *gorm.DB) models.UserRepository {
 }
 
 func (u *userRepository) RegisterUser(ctx context.Context, userName string, password string) (string, error) {
-	u.database = u.database.WithContext(ctx)
-	_, _ = instrumentation.TraceAPMRequest(ctx, "RegisterUser", consts.SpanTypeQueryExecution)
-
+	_, ctx = instrumentation.TraceAPMRequest(ctx, "RegisterUser", consts.SpanTypeQueryExecution)
+	db := apmgorm.WithContext(ctx, u.database)
 	localUTCTime := time.Now()
 	user := &models.User{
 		UserName:  userName,
@@ -34,7 +34,7 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 		UpdatedAt: localUTCTime,
 	}
 
-	if err := u.database.Create(user).Error; err != nil {
+	if err := db.Create(user).Error; err != nil {
 		// Check if err is of type *pgconn.PgError and error code is 23505, which is the error code for unique_violation
 		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == consts.UniqueViolation {
 			return "", cerr.NewCustomErrorWithCodeAndOrigin("User already exists for this user", cerr.InvalidRequestErrorCode, err)
@@ -46,11 +46,10 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 }
 
 func (u *userRepository) GetUserByUserName(ctx context.Context, userName string) (*models.User, error) {
-
 	_, ctx = instrumentation.TraceAPMRequest(ctx, "GetUserByUserName", consts.SpanTypeQueryExecution)
-	u.database = u.database.WithContext(ctx)
+	db := apmgorm.WithContext(ctx, u.database)
 	var user models.User
-	if err := u.database.Where("user_name = ?", userName).First(&user).Error; err != nil {
+	if err := db.Where("user_name = ?", userName).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			return nil, cerr.NewCustomErrorWithCodeAndOrigin("User not found", cerr.InvalidRequestErrorCode, err)
 		}
