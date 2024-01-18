@@ -1,12 +1,14 @@
 package repository
 
 import (
+	"context"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/instrumentation"
 	"gorm.io/gorm"
 )
 
@@ -20,7 +22,10 @@ func NewUserRepository(database *gorm.DB) models.UserRepository {
 	}
 }
 
-func (u *userRepository) RegisterUser(userName string, password string) (string, error) {
+func (u *userRepository) RegisterUser(ctx context.Context, userName string, password string) (string, error) {
+	u.database = u.database.WithContext(ctx)
+	_, _ = instrumentation.TraceAPMRequest(ctx, "RegisterUser", consts.SpanTypeQueryExecution)
+
 	localUTCTime := time.Now()
 	user := &models.User{
 		UserName:  userName,
@@ -40,7 +45,10 @@ func (u *userRepository) RegisterUser(userName string, password string) (string,
 	return user.UUID.String(), nil
 }
 
-func (u *userRepository) GetUserByUserName(userName string) (*models.User, error) {
+func (u *userRepository) GetUserByUserName(ctx context.Context, userName string) (*models.User, error) {
+
+	_, ctx = instrumentation.TraceAPMRequest(ctx, "GetUserByUserName", consts.SpanTypeQueryExecution)
+	u.database = u.database.WithContext(ctx)
 	var user models.User
 	if err := u.database.Where("user_name = ?", userName).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {

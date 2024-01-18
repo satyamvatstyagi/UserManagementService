@@ -14,3 +14,8 @@ const (
 	UniqueViolation     = "23505"
 	ForeignKeyViolation = "23503"
 )
+
+const (
+	SpanTypeCustum         = "custum"
+	SpanTypeQueryExecution = "psql"
+)
