@@ -6,12 +6,12 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
-	"github.com/jinzhu/gorm"
+	"gorm.io/gorm"
+
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/instrumentation"
-	"go.elastic.co/apm/module/apmgorm/v2"
 	"go.elastic.co/apm/v2"
 )
 
@@ -26,9 +26,7 @@ func NewUserRepository(database *gorm.DB) models.UserRepository {
 }
 
 func (u *userRepository) RegisterUser(ctx context.Context, userName string, password string) (string, error) {
-	span, ctx := instrumentation.TraceAPMRequest(ctx, "RegisterUser", consts.SpanTypeQueryExecution)
-	defer span.End()
-	db := apmgorm.WithContext(ctx, u.database)
+
 	localUTCTime := time.Now()
 	user := &models.User{
 		UserName:  userName,
@@ -37,7 +35,15 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 		UpdatedAt: localUTCTime,
 	}
 
-	if err := db.Create(user).Error; err != nil {
+	//for fetching the database query
+	statement := u.database.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Create(user)
+	})
+
+	instrument := instrumentation.InitGormAPM(ctx, "postgresql", statement)
+	defer instrument.GetSpan().End()
+
+	if err := u.database.Create(user).Error; err != nil {
 		// Check if err is of type *pgconn.PgError and error code is 23505, which is the error code for unique_violation
 		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == consts.UniqueViolation {
 			apm.CaptureError(ctx, fmt.Errorf("db error: %s", pgErr.Error())).Send()
@@ -51,11 +57,17 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 }
 
 func (u *userRepository) GetUserByUserName(ctx context.Context, userName string) (*models.User, error) {
-	span, ctx := instrumentation.TraceAPMRequest(ctx, "GetUserByUserName", consts.SpanTypeQueryExecution)
-	defer span.End()
-	db := apmgorm.WithContext(ctx, u.database)
 	var user models.User
-	if err := db.Where("user_name = ?", userName).First(&user).Error; err != nil {
+
+	//for fetching the database query
+	statement := u.database.ToSQL(func(tx *gorm.DB) *gorm.DB {
+		return tx.Where("user_name = ?", userName).First(&user)
+	})
+
+	instrument := instrumentation.InitGormAPM(ctx, "postgresql", statement)
+	defer instrument.GetSpan().End()
+
+	if err := u.database.Where("user_name = ?", userName).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			apm.CaptureError(ctx, fmt.Errorf("db error: %s", err.Error())).Send()
 			return nil, cerr.NewCustomErrorWithCodeAndOrigin("User not found", cerr.InvalidRequestErrorCode, err)

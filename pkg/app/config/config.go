@@ -4,19 +4,17 @@ import (
 	"log"
 	"os"
 
-	"github.com/jinzhu/gorm"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
-	"go.elastic.co/apm/module/apmgorm/v2"
-	_ "go.elastic.co/apm/module/apmgorm/v2/dialects/postgres"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 type Config struct{}
 
 func (c *Config) InitDb() *gorm.DB {
 	dsn := os.Getenv("DB_DSN")
-	db, err := apmgorm.Open("postgres", dsn)
-
+	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		log.Fatal(err)
 	}
