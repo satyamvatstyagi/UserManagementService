@@ -11,7 +11,7 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
-	"github.com/satyamvatstyagi/UserManagementService/pkg/common/instrumentation"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/mtnapm"
 	"go.elastic.co/apm/v2"
 )
 
@@ -40,7 +40,7 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 		return tx.Create(user)
 	})
 
-	instrument := instrumentation.InitGormAPM(ctx, "postgresql", statement)
+	instrument := mtnapm.InitGormAPM(ctx, "postgresql", statement)
 	defer instrument.GetSpan().End()
 
 	if err := u.database.Create(user).Error; err != nil {
@@ -64,7 +64,7 @@ func (u *userRepository) GetUserByUserName(ctx context.Context, userName string)
 		return tx.Where("user_name = ?", userName).First(&user)
 	})
 
-	instrument := instrumentation.InitGormAPM(ctx, "postgresql", statement)
+	instrument := mtnapm.InitGormAPM(ctx, "postgresql", statement)
 	defer instrument.GetSpan().End()
 
 	if err := u.database.Where("user_name = ?", userName).First(&user).Error; err != nil {
