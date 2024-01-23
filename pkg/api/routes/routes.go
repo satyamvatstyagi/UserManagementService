@@ -28,16 +28,16 @@ func Setup() {
 	db := cfg.InitDb()
 
 	// Initialize the repositories
-	userRepository := repository.NewUserRepository(db)
+	userRepository := repository.NewUserRepository(db, logger)
 
 	httpClient := &http.Client{Timeout: consts.MaxTimeout}
 	restHTTPClient := restclient.NewHTTPClient(httpClient)
 
 	// Initialize the usecases
-	userUsecase := usecase.NewUserUsecase(userRepository, restHTTPClient)
+	userUsecase := usecase.NewUserUsecase(userRepository, restHTTPClient, logger)
 
 	// Initialize the controller
-	userController := &controller.UserController{UserUsecase: userUsecase}
+	userController := &controller.UserController{UserUsecase: userUsecase, Logger: logger}
 
 	ginMode := os.Getenv("GIN_MODE")
 	gin.SetMode(ginMode)

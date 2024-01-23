@@ -7,17 +7,17 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"gorm.io/gorm"
 )
 
 type userRepository struct {
 	database *gorm.DB
+	logger   *logger.MtnLogger
 }
 
-func NewUserRepository(database *gorm.DB) models.UserRepository {
-	return &userRepository{
-		database: database,
-	}
+func NewUserRepository(database *gorm.DB, logger *logger.MtnLogger) *userRepository {
+	return &userRepository{database: database, logger: logger}
 }
 
 func (u *userRepository) RegisterUser(userName string, password string) (string, error) {

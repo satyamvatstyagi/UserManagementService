@@ -14,6 +14,7 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -21,12 +22,14 @@ import (
 type userUsecase struct {
 	userRepository models.UserRepository
 	httpClient     restclient.HTTPClient
+	logger         *logger.MtnLogger
 }
 
-func NewUserUsecase(userRepository models.UserRepository, hc restclient.HTTPClient) domain.UserUsecase {
+func NewUserUsecase(userRepository models.UserRepository, hc restclient.HTTPClient, logger *logger.MtnLogger) domain.UserUsecase {
 	return &userUsecase{
 		userRepository: userRepository,
 		httpClient:     hc,
+		logger:         logger,
 	}
 }
 

@@ -7,10 +7,12 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 )
 
 type UserController struct {
 	UserUsecase domain.UserUsecase
+	Logger      *logger.MtnLogger
 }
 
 func (c *UserController) RegisterUser(ctx *gin.Context) {
