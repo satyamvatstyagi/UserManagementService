@@ -1,0 +1,24 @@
+"@startuml Sequence Diagram for User Management"
+actor App as A
+participant "Configuration Management Controller" as C
+participant "Configuration Management Usecase" as U
+participant "Configuration Management Repository" as R
+database "Database" as DB
+
+A -> C: Send request to get configuration
+activate C
+C -> U: Send request to usecase
+activate U
+U -> R: Send request to repository
+activate R
+R -> DB: Fetch details from DB
+activate DB
+DB --> R: Return value to repository
+deactivate DB
+R --> U: Return value to usecase
+deactivate R
+U --> C: Return value to controller
+deactivate U
+C --> A: Return values to App
+deactivate C
+@enduml
