@@ -23,7 +23,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.RegisterUser(&req)
+	res, err := c.UserUsecase.RegisterUser(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
@@ -41,7 +41,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.LoginUser(&req)
+	res, err := c.UserUsecase.LoginUser(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
@@ -59,7 +59,7 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.GetUserByUserName(&req)
+	res, err := c.UserUsecase.GetUserByUserName(ctx.Request.Context(),&req)
 	if err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
@@ -77,7 +77,7 @@ func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.GetOrderByOrderUserName(&req)
+	res, err := c.UserUsecase.GetOrderByOrderUserName(ctx.Request.Context(),&req)
 	if err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
