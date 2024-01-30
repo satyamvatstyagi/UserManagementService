@@ -166,7 +166,7 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	//-------------------------------------------------------------------------------------------------------------------//
 
 	resp, err := restclient.APIRequest(ctx,
-		restclient.RequestParams{URL: "http://localhost:8081/order/" + user.UserName,
+		restclient.RequestParams{URL: "http://localhost:8082/order/" + user.UserName,
 			Method: http.MethodGet,
 			Body:   nil,
 			Headers: map[string]string{"Content-Type": "application/json",

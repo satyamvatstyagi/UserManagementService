@@ -49,7 +49,7 @@ func Setup() {
 	// Setup the routes
 	setupUserRoutes(userController, router, logger)
 
-	err := router.Run(":8082")
+	err := router.Run(":8081")
 	if err != nil {
 		log.Fatal(err)
 	}
