@@ -13,8 +13,6 @@ User -> App: Provides phone number
 App -> Backend: Sends request to fetch subscriber details
 Backend -> MADApi: Fetches subscriber details
 MADApi --> Backend: Returns subscriber details
-Backend -> MADApi: Fetches customer type details
-MADApi --> Backend: Returns customer details
 Backend --> App: Returns aggregated subscriber details
 
 'Send OTP generation request
@@ -28,10 +26,10 @@ App -> App: Displays login screen with \n OTP and password fields
 User -> App: Enters OTP and password
 App -> Backend: Sends login request with \n phone number, OTP, and password
 Backend -> MADApi: Login request
-MADApi --> Backend: Sends error code as 1701
+MADApi --> Backend: Sends error code as 100015
 Backend --> App: Http 303 New user login
 
-'Got 1701 error code, ask user to reset password
+'Got 100015 error code, ask user to reset password
 App -> App: Displays password reset screen and \n ask user to enter new password,\n confirm password, otp and  \n National ID or Passport number
 User -> App: Enters new password, confirm password,\n otp and National ID or Passport number
 App -> Backend: Sends request to change password
