@@ -13,6 +13,20 @@ type UserController struct {
 	UserUsecase domain.UserUsecase
 }
 
+// HealthCheck      godoc
+//
+//	@Summary		Health Check
+//	@Description	Health Check will return a message indicating that the user management service is up and running
+//	@Accept			json
+//	@Produce		json
+//	@Success		200	{object}	domain.Response	"Service is up and running"
+//
+//	@Router			/health [get]
+//	@Tags			user management service
+func (c *UserController) HealthCheck(ctx *gin.Context) {
+	ctx.JSON(http.StatusOK, domain.Response{Message: "Service is up and running", Success: true})
+}
+
 // RegisterUser godoc
 //
 //	@Summary		Register a new user
@@ -41,7 +55,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.Response{Message: "User Registered Successfully", Success: true, Data: domain.RegisterUserResp{Data: *res}})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Registered Successfully", Success: true, Data: *res})
 }
 
 // LoginUser godoc
@@ -72,7 +86,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.Response{Message: "User Logged In Successfully", Success: true, Data: domain.LoginSuccessResp{Data: *res}})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Logged In Successfully", Success: true, Data: *res})
 }
 
 // GetUserByUserName godoc
@@ -103,7 +117,7 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.Response{Message: "User Fetched Successfully", Success: true, Data: domain.GetUserByUserNameResp{Data: *res}})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Fetched Successfully", Success: true, Data: *res})
 }
 
 // GetOrderByOrderUserName godoc
@@ -134,5 +148,5 @@ func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.Response{Message: "Order Fetched Successfully", Success: true, Data: domain.GetOrderByOrderUserNameResp{Data: *res}})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "Order Fetched Successfully", Success: true, Data: *res})
 }

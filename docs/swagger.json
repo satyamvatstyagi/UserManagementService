@@ -12,6 +12,29 @@
     "host": "localhost:8080",
     "basePath": "/user",
     "paths": {
+        "/health": {
+            "get": {
+                "description": "Health Check will return a message indicating that the user management service is up and running",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user management service"
+                ],
+                "summary": "Health Check",
+                "responses": {
+                    "200": {
+                        "description": "Service is up and running",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    }
+                }
+            }
+        },
         "/user/login": {
             "post": {
                 "description": "Login a user",
@@ -364,6 +387,26 @@
             "properties": {
                 "user_id": {
                     "type": "string"
+                }
+            }
+        },
+        "domain.Response": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "description": "Data is the data returned in the response."
+                },
+                "error_code": {
+                    "description": "ErrorCode is an integer value indicating the error code.",
+                    "type": "integer"
+                },
+                "message": {
+                    "description": "Message is a string message returned in the response.",
+                    "type": "string"
+                },
+                "success": {
+                    "description": "Success is a boolean value indicating whether the request was successful or not.",
+                    "type": "boolean"
                 }
             }
         }

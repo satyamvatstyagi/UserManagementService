@@ -98,6 +98,21 @@ definitions:
       user_id:
         type: string
     type: object
+  domain.Response:
+    properties:
+      data:
+        description: Data is the data returned in the response.
+      error_code:
+        description: ErrorCode is an integer value indicating the error code.
+        type: integer
+      message:
+        description: Message is a string message returned in the response.
+        type: string
+      success:
+        description: Success is a boolean value indicating whether the request was
+          successful or not.
+        type: boolean
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -106,6 +121,22 @@ info:
   title: User Management Service
   version: "1.0"
 paths:
+  /health:
+    get:
+      consumes:
+      - application/json
+      description: Health Check will return a message indicating that the user management
+        service is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service is up and running
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Health Check
+      tags:
+      - user management service
   /user/{username}:
     get:
       consumes:
