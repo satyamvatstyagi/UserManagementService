@@ -1,0 +1,76 @@
+@startuml Login Flow
+title New User Login Flow
+
+autonumber
+
+actor User
+participant "Mobile App" as App
+participant "MTNID Service" as Backend
+participant "MADApi" as MADApi
+
+User -> App: Provides phone number
+'Fetch subscriber details
+App -> Backend: Sends request to fetch subscriber details
+Backend -> MADApi: Fetches subscriber details
+MADApi --> Backend: Returns subscriber details
+Backend -> MADApi: Fetches customer type details
+MADApi --> Backend: Returns customer details
+Backend --> App: Returns aggregated subscriber details
+
+'Send OTP generation request
+App -> Backend: Sends request to generate OTP
+Backend -> MADApi: Generates OTP
+Backend --> App: OTP request has been sent successfully
+MADApi --> User: Sends OTP
+App -> App: Displays login screen with \n OTP and password fields
+
+'Send Login request
+User -> App: Enters OTP and password
+App -> Backend: Sends login request with \n phone number, OTP, and password
+Backend -> MADApi: Login request
+alt Login successful
+    MADApi --> Backend: Login successful
+    Backend --> Backend: Generates token if login is successful
+    Backend --> App: Returns token
+    App -> App: Displays home screen
+else Login failed as new user login attempt
+    MADApi --> Backend: Sends error code as 100015
+    Backend --> App: Sends 200 OK with error code 10000
+
+    'Got 100015 error code, ask user to reset password
+    App -> App: Displays password reset screen and \n ask user to enter new password,\n confirm password, otp and  \n National ID or Passport number
+    User -> App: Enters new password, confirm password,\n otp and National ID or Passport number
+    App -> Backend: Sends request to change password
+    Backend -> MADApi: Change password request
+    alt Password changed successfully
+        MADApi --> Backend: Password changed successfully
+        Backend --> App: Password changed successfully
+    else Password change failed due to invalid OTP
+        MADApi --> Backend: Returns error code as 1702
+        Backend --> App: send message as <color:red>"invalid OTP"</color> with error code 10001
+    else Password change failed due to invalid password
+        MADApi --> Backend: Returns error code as 1004
+        Backend --> App: send message as <color:red>"invalid password"</color>
+    else Password change failed due to invalid phone number
+        MADApi --> Backend: Returns error code as 1002
+        Backend --> App: send message as <color:red>"invalid phone number"</color>
+    end
+
+    'Login with new password
+    App -> App: Displays login screen with \n OTP and password fields
+    'Send OTP generation request
+    App -> Backend: Sends request to generate OTP
+    Backend -> MADApi: Generates OTP
+    Backend --> App: OTP request has been sent successfully
+    MADApi --> User: Sends OTP
+    User -> App: Enters OTP and password
+    'Login with new password
+    App -> Backend: Sends login request with \n phone number, OTP, and password
+    Backend -> MADApi: Login request
+    MADApi --> Backend: Login successful
+    Backend --> Backend: Generates token if login is successful
+    Backend --> App: Returns token
+    App -> App: Displays home screen
+end
+
+@enduml
