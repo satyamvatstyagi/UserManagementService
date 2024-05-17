@@ -48,3 +48,14 @@ type GetOrderByOrderUserNameResponse struct {
 	ProductName string `json:"product_name"`
 	Quantity    int    `json:"quantity"`
 }
+
+type Response struct {
+	// Message is a string message returned in the response.
+	Message string `json:"message"`
+	// Success is a boolean value indicating whether the request was successful or not.
+	Success bool `json:"success"`
+	// ErrorCode is an integer value indicating the error code.
+	ErrorCode int `json:"error_code,omitempty"`
+	// Data is the data returned in the response.
+	Data interface{} `json:"data,omitempty"`
+}

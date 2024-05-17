@@ -13,10 +13,23 @@ type UserController struct {
 	UserUsecase domain.UserUsecase
 }
 
+// RegisterUser godoc
+//
+//	@Summary		Register a new user
+//	@Description	Register a new user
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		domain.RegisterUserRequest	true	"User Details"
+//	@Success		200		{object}	domain.RegisterUserResp		"User Registered Successfully"
+//	@Failure		400		{object}	domain.ErrorResponse		"Invalid Request"
+//	@Failure		401		{object}	domain.ErrorResponse		"Unauthorized"
+//	@Failure		500		{object}	domain.ErrorResponse		"Internal Server Error"
+//	@Router			/user/register [post]
+//	@Tags			user management service
 func (c *UserController) RegisterUser(ctx *gin.Context) {
 	var req domain.RegisterUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid Request"})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
 
@@ -24,17 +37,30 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 	res, err := c.UserUsecase.RegisterUser(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "User Registered Successfully", "data": gin.H{"user_id": res.UserID}})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Registered Successfully", Success: true, Data: domain.RegisterUserResp{Data: *res}})
 }
 
+// LoginUser godoc
+//
+//	@Summary		Login a user
+//	@Description	Login a user
+//	@Accept			json
+//	@Produce		json
+//	@Param			user	body		domain.LoginUserRequest	true	"User Details"
+//	@Success		200		{object}	domain.LoginSuccessResp	"User Logged In Successfully"
+//	@Failure		400		{object}	domain.ErrorResponse	"Invalid Request"
+//	@Failure		401		{object}	domain.ErrorResponse	"Unauthorized"
+//	@Failure		500		{object}	domain.ErrorResponse	"Internal Server Error"
+//	@Router			/user/login [post]
+//	@Tags			user management service
 func (c *UserController) LoginUser(ctx *gin.Context) {
 	var req domain.LoginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid Request"})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
 
@@ -42,45 +68,71 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 	res, err := c.UserUsecase.LoginUser(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "User Logged In Successfully", "data": gin.H{"token": res.Token}})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Logged In Successfully", Success: true, Data: domain.LoginSuccessResp{Data: *res}})
 }
 
+// GetUserByUserName godoc
+//
+//	@Summary		Get user by username
+//	@Description	Get user by username
+//	@Accept			json
+//	@Produce		json
+//	@Param			username	path		string							true	"User Name"
+//	@Success		200			{object}	domain.GetUserByUserNameResp	"User Fetched Successfully"
+//	@Failure		400			{object}	domain.ErrorResponse			"Invalid Request"
+//	@Failure		401			{object}	domain.ErrorResponse			"Unauthorized"
+//	@Failure		500			{object}	domain.ErrorResponse			"Internal Server Error"
+//	@Router			/user/{username} [get]
+//	@Tags			user management service
 func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 	var req domain.GetUserByUserNameRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid Request"})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.GetUserByUserName(ctx.Request.Context(),&req)
+	res, err := c.UserUsecase.GetUserByUserName(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "User Fetched Successfully", "data": res})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Fetched Successfully", Success: true, Data: domain.GetUserByUserNameResp{Data: *res}})
 }
 
+// GetOrderByOrderUserName godoc
+//
+//	@Summary		Get order by order username
+//	@Description	Get order by order username
+//	@Accept			json
+//	@Produce		json
+//	@Param			username	path		string								true	"User Name"
+//	@Success		200			{object}	domain.GetOrderByOrderUserNameResp	"Order Fetched Successfully"
+//	@Failure		400			{object}	domain.ErrorResponse				"Invalid Request"
+//	@Failure		401			{object}	domain.ErrorResponse				"Unauthorized"
+//	@Failure		500			{object}	domain.ErrorResponse				"Internal Server Error"
+//	@Router			/user/order/{username} [get]
+//	@Tags			user management service
 func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
 	var req domain.GetOrderByOrderUserNameRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid Request"})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
 
 	// Call the usecase
-	res, err := c.UserUsecase.GetOrderByOrderUserName(ctx.Request.Context(),&req)
+	res, err := c.UserUsecase.GetOrderByOrderUserName(ctx.Request.Context(), &req)
 	if err != nil {
 		log.Println(err)
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": cerr.GetErrorMessage(err)})
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"message": "Order Fetched Successfully", "data": res})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "Order Fetched Successfully", Success: true, Data: domain.GetOrderByOrderUserNameResp{Data: *res}})
 }
