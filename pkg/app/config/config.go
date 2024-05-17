@@ -18,7 +18,11 @@ func (c *Config) InitDb() *gorm.DB {
 	if err != nil {
 		log.Fatal(err)
 	}
-	db.AutoMigrate(&models.User{})
+
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		log.Fatal(err)
+	}
 	//DropUnusedColumns(db, &models.User{})
 
 	return db

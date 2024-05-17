@@ -162,14 +162,19 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 
 	//-------------------------------------------------------------------------------------------------------------------//
 
-	resp, err := restclient.APIRequest(ctx,
-		restclient.RequestParams{URL: "http://localhost:8081/order/" + user.UserName,
-			Method: http.MethodGet,
-			Body:   nil,
-			Headers: map[string]string{"Content-Type": "application/json",
-				"Accept":        "application/json",
-				"Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(os.Getenv("BASIC_AUTH_USER")+":"+os.Getenv("BASIC_AUTH_PASSWORD")))},
-			SpanName: "GetUserOrder"})
+	// resp, err := restclient.APIRequest(ctx,
+	// 	restclient.RequestParams{URL: "http://localhost:8081/order/" + user.UserName,
+	// 		Method: http.MethodGet,
+	// 		Body:   nil,
+	// 		Headers: map[string]string{"Content-Type": "application/json",
+	// 			"Accept":        "application/json",
+	// 			"Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(os.Getenv("BASIC_AUTH_USER")+":"+os.Getenv("BASIC_AUTH_PASSWORD")))},
+	// 		SpanName: "GetUserOrder"})
+
+	resp, err := http.Get("http://localhost:8081/order/" + user.UserName)
+	if err != nil {
+		return nil, err
+	}
 
 	buf := new(bytes.Buffer)
 	_, err = buf.ReadFrom(resp.Body)

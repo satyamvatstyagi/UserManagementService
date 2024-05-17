@@ -69,7 +69,7 @@ func (i *APM) SetDestinationAddress(addr string, port int) *APM {
 }
 
 func (i *APM) SetDestinationService(name string, resource string) *APM {
-	i.span.Context.SetDestinationService(apm.DestinationServiceSpanContext{Name: name, Resource: resource})
+	// i.span.Context.SetServiceTarget(apm.DestinationServiceSpanContext{Name: name, Resource: resource})
 	return i
 }
 
