@@ -58,7 +58,7 @@ func Setup() {
 func setupUserRoutes(c *controller.UserController, router *gin.Engine, l *logger.MtnLogger) {
 	username := os.Getenv("BASIC_AUTH_USER")
 	password := os.Getenv("BASIC_AUTH_PASSWORD")
-	router.GET("/health", middlewares.LoggingMiddleware(l), c.HealthCheck)
+	router.GET("/user/health", middlewares.LoggingMiddleware(l), c.HealthCheck)
 	userService := router.Group("/user", gin.BasicAuth(gin.Accounts{username: password}))
 	{
 		userService.POST("/register", middlewares.LoggingMiddleware(l), c.RegisterUser)

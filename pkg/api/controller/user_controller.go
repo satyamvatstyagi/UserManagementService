@@ -21,7 +21,7 @@ type UserController struct {
 //	@Produce		json
 //	@Success		200	{object}	domain.Response	"Service is up and running"
 //
-//	@Router			/health [get]
+//	@Router			/user/health [get]
 //	@Tags			user management service
 func (c *UserController) HealthCheck(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, domain.Response{Message: "Service is up and running", Success: true})
