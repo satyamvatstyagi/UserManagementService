@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"os"
 
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 	"go.elastic.co/apm/v2"
 )
 
@@ -74,8 +74,8 @@ func (i *APM) SetDestinationService(name string, resource string) *APM {
 }
 
 func InitGormAPM(ctx context.Context, dialector string, query string) *APM {
-	dbName := os.Getenv("DATABASE_NAME")
-	dbuser := os.Getenv("DATABASE_USER")
+	dbName := env.EnvConfig.DatabaseName
+	dbuser := env.EnvConfig.DatabaseUser
 	name := truncateString(query, 24)
 
 	spanType := fmt.Sprintf("db.%s.query", dialector)

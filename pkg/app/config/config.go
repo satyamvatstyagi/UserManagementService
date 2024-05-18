@@ -2,9 +2,11 @@ package config
 
 import (
 	"log"
-	"os"
+	"strings"
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,7 +15,7 @@ import (
 type Config struct{}
 
 func (c *Config) InitDb() *gorm.DB {
-	dsn := os.Getenv("DB_DSN")
+	dsn := env.EnvConfig.DatabaseDNS
 	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		log.Println("Error connecting to database: ", err)
@@ -52,37 +54,16 @@ func (c *Config) InitDb() *gorm.DB {
 // }
 
 // Function to initialize the logger
-func (c *Config) InitLogger() *logger.MtnLogger {
-	fileName := os.Getenv("LOG_FILE_NAME")
+func (c *Config) InitLogger() logger.Logger {
 
-	// If the LOG_FILE_NAME environment variable is not set, set it to "app.log"
-	if fileName == "" {
-		fileName = "app.log"
-	}
+	fileName := strings.ToLower(consts.AppName) + ".log"
 
-	// Check if "log" directory exists in the current directory
-	if _, err := os.Stat("log"); os.IsNotExist(err) {
-		// Create the directory
-		err := os.Mkdir("log", 0755)
-		if err != nil {
-			log.Panicln("Error creating log directory: ", err)
-		}
-	}
-
-	// Check if the file exists in the "log" directory
-	filePath := "log/" + fileName
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		// Create the file
-		file, err := os.Create(filePath)
-		if err != nil {
-			log.Println("Error creating log file: ", err)
-		}
-		file.Close()
-	}
+	// Create the log file path
+	filePath := env.EnvConfig.LogFilePath + "/" + fileName
 
 	logger, err := logger.NewMtnLogger(filePath)
 	if err != nil {
-		log.Println("Error creating logger: ", err)
+		log.Fatal(err)
 	}
 
 	return logger

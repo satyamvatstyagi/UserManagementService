@@ -1,49 +1,52 @@
 package middlewares
 
 import (
+	"context"
 	"fmt"
-	"net/http"
+	"runtime/debug"
+	"time"
 
 	"github.com/gin-gonic/gin"
-	l "github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 )
 
 // LoggingMiddleware is a middleware that logs the request and response
-func LoggingMiddleware(logger l.Logger) gin.HandlerFunc {
+func LoggingMiddleware(logger logger.Logger) gin.HandlerFunc {
 	return func(c *gin.Context) {
-		swriter := &statusWriter{c.Writer, 0, 0}
+		trace := true
+		fields := map[string]interface{}{
+			consts.TraceID: c.Request.Header.Get(consts.TraceID),
+			"method":       c.Request.Method,
+			"endpoint":     c.Request.URL.Path,
+		}
+
+		ctx := c.Request.Context()
+		ctx = context.WithValue(ctx, consts.LogContext, fields)
+		c.Request = c.Request.WithContext(ctx)
+
+		defer func() {
+			if trace {
+				traceMsg := fmt.Sprintf("Stacktrace: %v", string(debug.Stack()))
+				logger.
+					WithContext(ctx).
+					Panic(traceMsg)
+			}
+		}()
+		// Log the inbound request
+		logger.WithContext(ctx).Info("Inbound request")
+		timeStart := time.Now()
 		c.Next()
 
-		fields := map[string]interface{}{
-			"endpoint":    c.Request.URL.Path,
-			"method":      c.Request.Method,
-			"countryISO2": c.Request.Header.Get("countryISO2"),
-			"userType":    c.Request.Header.Get("userType"),
-		}
-
-		if swriter.status >= 400 {
-			fields["error"] = fmt.Sprintf("Inbound request failed with status %d", swriter.status)
-			logger.Error("", fields)
+		// Check the status code of the response and log accordingly
+		statusCode := c.Writer.Status()
+		fields["status_code"] = statusCode
+		fields["duration_ms"] = time.Since(timeStart).String()
+		if statusCode >= 400 {
+			logger.WithFields(fields).Error("Outbound response")
 		} else {
-			logger.Info("Inbound request successful", fields)
+			logger.WithFields(fields).Info("Outbound response")
 		}
+		trace = false
 	}
-}
-
-// statusWriter is a custom ResponseWriter that captures the HTTP status code.
-type statusWriter struct {
-	http.ResponseWriter
-	status int
-	size   int
-}
-
-func (w *statusWriter) WriteHeader(code int) {
-	w.status = code
-	w.ResponseWriter.WriteHeader(code)
-}
-
-func (w *statusWriter) Write(b []byte) (int, error) {
-	size, err := w.ResponseWriter.Write(b)
-	w.size += size
-	return size, err
 }

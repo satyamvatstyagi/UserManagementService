@@ -2,23 +2,23 @@ package jwt
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 )
 
 // Function to generate jwt token
 func GenerateToken(userID string, createdAt time.Time) (string, error) {
 	// Get the jwt secret from the environment variable
-	jwtSecret := os.Getenv("JWT_SECRET")
+	jwtSecret := env.EnvConfig.JWTSecretKey
 	if jwtSecret == "" {
 		return "", fmt.Errorf("JWT_SECRET not set")
 	}
 
 	// Get the jwt expiry from the environment variable
-	jwtExpiry := os.Getenv("JWT_EXPIRY")
+	jwtExpiry := env.EnvConfig.JWTExpirationTime
 	if jwtExpiry == "" {
 		return "", fmt.Errorf("JWT_EXPIRY not set")
 	}
@@ -88,7 +88,7 @@ func GenerateToken(userID string, createdAt time.Time) (string, error) {
 // Function to validate jwt token
 func ValidateToken(tokenString string) error {
 	// Get the jwt secret from the environment variable
-	jwtSecret := os.Getenv("JWT_SECRET")
+	jwtSecret := env.EnvConfig.JWTSecretKey
 	if jwtSecret == "" {
 		return fmt.Errorf("jwt secret not set")
 	}
@@ -120,7 +120,7 @@ func ValidateToken(tokenString string) error {
 // Function to get the claims from the token
 func GetClaims(tokenString string) (jwt.MapClaims, error) {
 	// Get the jwt secret from the environment variable
-	jwtSecret := os.Getenv("JWT_SECRET")
+	jwtSecret := env.EnvConfig.JWTSecretKey
 	if jwtSecret == "" {
 		return nil, fmt.Errorf("jwt secret not set")
 	}

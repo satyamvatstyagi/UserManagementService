@@ -9,11 +9,11 @@ import (
 	"html"
 	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
 	"golang.org/x/crypto/bcrypt"
@@ -109,8 +109,8 @@ func (u *userUsecase) SendRequestToServer(ctx context.Context, url string, reque
 	req.Header.Set("Accept", "application/json")
 
 	// Get the basic auth credentials from the env variables
-	username := os.Getenv("BASIC_AUTH_USER")
-	password := os.Getenv("BASIC_AUTH_PASSWORD")
+	username := env.EnvConfig.BasicAuthUser
+	password := env.EnvConfig.BasicAuthPassword
 
 	// Encode the credentials
 	auth := username + ":" + password
@@ -168,7 +168,7 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	// 		Body:   nil,
 	// 		Headers: map[string]string{"Content-Type": "application/json",
 	// 			"Accept":        "application/json",
-	// 			"Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(os.Getenv("BASIC_AUTH_USER")+":"+os.Getenv("BASIC_AUTH_PASSWORD")))},
+	// 			"Authorization": "Basic " + base64.StdEncoding.EncodeToString([]byte(env.EnvConfig.BasicAuthUser+":"+env.EnvConfig.BasicAuthPassword))},
 	// 		SpanName: "GetUserOrder"})
 
 	resp, err := http.Get("http://localhost:8081/order/" + user.UserName)
