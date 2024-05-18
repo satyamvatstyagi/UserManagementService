@@ -40,6 +40,10 @@ func Setup() {
 	userController := &controller.UserController{UserUsecase: userUsecase}
 
 	ginMode := os.Getenv("GIN_MODE")
+	if ginMode == "" {
+		log.Println("GIN_MODE is not set, defaulting to debug mode")
+		ginMode = gin.DebugMode
+	}
 	gin.SetMode(ginMode)
 	router := gin.Default()
 
@@ -51,7 +55,7 @@ func Setup() {
 
 	err := router.Run(":8080")
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error starting server: ", err)
 	}
 }
 

@@ -16,12 +16,12 @@ func (c *Config) InitDb() *gorm.DB {
 	dsn := os.Getenv("DB_DSN")
 	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error connecting to database: ", err)
 	}
 
 	err = db.AutoMigrate(&models.User{})
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error migrating database: ", err)
 	}
 	//DropUnusedColumns(db, &models.User{})
 
@@ -65,7 +65,7 @@ func (c *Config) InitLogger() *logger.MtnLogger {
 		// Create the directory
 		err := os.Mkdir("log", 0755)
 		if err != nil {
-			log.Fatal(err)
+			log.Panicln("Error creating log directory: ", err)
 		}
 	}
 
@@ -75,14 +75,14 @@ func (c *Config) InitLogger() *logger.MtnLogger {
 		// Create the file
 		file, err := os.Create(filePath)
 		if err != nil {
-			log.Fatal(err)
+			log.Println("Error creating log file: ", err)
 		}
 		file.Close()
 	}
 
 	logger, err := logger.NewMtnLogger(filePath)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error creating logger: ", err)
 	}
 
 	return logger
