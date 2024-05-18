@@ -2,6 +2,7 @@ package logger
 
 import (
 	"context"
+	"log"
 	"sync"
 	"time"
 
@@ -118,6 +119,7 @@ func (mtn *MtnLogger) Log(level logrus.Level, message string) {
 
 	mtn.Logger.WithFields(entry.Data).Log(entry.Level, entry.Message)
 	mtn.WithFields(make(map[string]interface{}))
+	log.Println(message)
 }
 
 // Info logs messages with Info level and additional fields
