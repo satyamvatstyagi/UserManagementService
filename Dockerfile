@@ -13,6 +13,13 @@ COPY . .
 # Set the Gin mode to debug (or release, or test)
 ENV GIN_MODE=debug
 
+# Set the default value for the database environment variables
+ENV DATABASE_HOST=localhost
+ENV DATABASE_PORT=5432
+ENV DATABASE_USER=postgres
+ENV DATABASE_PASSWORD=nagarro
+ENV DATABASE_NAME=mtn
+
 #Test go application
 RUN go test ./...
 

@@ -1,57 +1,24 @@
-version: '3'
+version: '3.8'
+
 services:
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.12.0
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    volumes:
-      - ./config/filebeat.yml:/usr/share/filebeat/filebeat.yml
-      - ./logs/:/logs/
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.0
-    volumes:
-      - ./config/logstash.conf:/usr/share/logstash/pipeline/logstash.conf:ro
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
-    volumes:
-      - ./config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml:ro
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-s",
-          "-f",
-          "http://localhost:9200/_cat/health"
-        ]
-      interval: 3s
-      timeout: 3s
-      retries: 10
+  app:
+    image: user-management-service-image:1.0.0
+    environment:
+      DATABASE_HOST: localhost
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: nagarro
+      DATABASE_NAME: mtn
+      DATABASE_PORT: 5432
     ports:
-      - 9200:9200
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.12.0
+      - "8080:8080"
     depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test:
-        [
-          "CMD",
-          "curl",
-          "-s",
-          "-f",
-          "http://localhost:5601/api/status"
-        ]
-      interval: 3s
-      timeout: 3s
-      retries: 50
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nagarro
+      POSTGRES_DB: mtn
     ports:
-      - 5601:5601
+      - "5432:5432"
