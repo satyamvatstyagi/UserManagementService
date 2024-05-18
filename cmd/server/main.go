@@ -10,9 +10,9 @@ import (
 )
 
 // @title			User Management Service
-// @version		1.0
-// @description	API for user management service which allows user to register, login and get user details.
-// @schemes		https
+// @version			1.0
+// @description		API for user management service which allows user to register, login and get user details.
+// @schemes			https
 // @host			localhost:8080
 // @BasePath		/user
 func main() {

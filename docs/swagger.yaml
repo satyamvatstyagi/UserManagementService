@@ -121,22 +121,6 @@ info:
   title: User Management Service
   version: "1.0"
 paths:
-  /health:
-    get:
-      consumes:
-      - application/json
-      description: Health Check will return a message indicating that the user management
-        service is up and running
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Service is up and running
-          schema:
-            $ref: '#/definitions/domain.Response'
-      summary: Health Check
-      tags:
-      - user management service
   /user/{username}:
     get:
       consumes:
@@ -168,6 +152,22 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorResponse'
       summary: Get user by username
+      tags:
+      - user management service
+  /user/health:
+    get:
+      consumes:
+      - application/json
+      description: Health Check will return a message indicating that the user management
+        service is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service is up and running
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Health Check
       tags:
       - user management service
   /user/login:

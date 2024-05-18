@@ -10,6 +10,9 @@ RUN go mod download
 
 COPY . .
 
+# Set the Gin mode to debug (or release, or test)
+ENV GIN_MODE=debug
+
 #Test go application
 RUN go test ./...
 

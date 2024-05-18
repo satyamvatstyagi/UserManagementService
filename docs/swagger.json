@@ -12,7 +12,7 @@
     "host": "localhost:8080",
     "basePath": "/user",
     "paths": {
-        "/health": {
+        "/user/health": {
             "get": {
                 "description": "Health Check will return a message indicating that the user management service is up and running",
                 "consumes": [

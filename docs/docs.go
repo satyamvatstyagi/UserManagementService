@@ -15,7 +15,7 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/health": {
+        "/user/health": {
             "get": {
                 "description": "Health Check will return a message indicating that the user management service is up and running",
                 "consumes": [
