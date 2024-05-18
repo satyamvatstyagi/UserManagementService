@@ -43,6 +43,7 @@ func (c *UserController) HealthCheck(ctx *gin.Context) {
 func (c *UserController) RegisterUser(ctx *gin.Context) {
 	var req domain.RegisterUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		log.Println("[UserController][RegisterUser] Error in ShouldBindJSON: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
@@ -50,7 +51,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 	// Call the usecase
 	res, err := c.UserUsecase.RegisterUser(ctx.Request.Context(), &req)
 	if err != nil {
-		log.Println(err)
+		log.Println("[UserController][RegisterUser] Error in RegisterUser: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
@@ -74,6 +75,7 @@ func (c *UserController) RegisterUser(ctx *gin.Context) {
 func (c *UserController) LoginUser(ctx *gin.Context) {
 	var req domain.LoginUserRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
+		log.Println("[UserController][LoginUser] Error in ShouldBindJSON: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
@@ -81,7 +83,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 	// Call the usecase
 	res, err := c.UserUsecase.LoginUser(ctx.Request.Context(), &req)
 	if err != nil {
-		log.Println(err)
+		log.Println("[UserController][LoginUser] Error in LoginUser: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
@@ -105,6 +107,7 @@ func (c *UserController) LoginUser(ctx *gin.Context) {
 func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 	var req domain.GetUserByUserNameRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
+		log.Println("[UserController][GetUserByUserName] Error in ShouldBindUri: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
@@ -112,7 +115,7 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 	// Call the usecase
 	res, err := c.UserUsecase.GetUserByUserName(ctx.Request.Context(), &req)
 	if err != nil {
-		log.Println(err)
+		log.Println("[UserController][GetUserByUserName] Error in GetUserByUserName: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}
@@ -136,6 +139,7 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
 	var req domain.GetOrderByOrderUserNameRequest
 	if err := ctx.ShouldBindUri(&req); err != nil {
+		log.Println("[UserController][GetOrderByOrderUserName] Error in ShouldBindUri: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
 		return
 	}
@@ -143,7 +147,7 @@ func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
 	// Call the usecase
 	res, err := c.UserUsecase.GetOrderByOrderUserName(ctx.Request.Context(), &req)
 	if err != nil {
-		log.Println(err)
+		log.Println("[UserController][GetOrderByOrderUserName] Error in GetOrderByOrderUserName: ", err)
 		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
 		return
 	}

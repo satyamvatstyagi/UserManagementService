@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
@@ -15,7 +16,7 @@ import (
 type Config struct{}
 
 func (c *Config) InitDb() *gorm.DB {
-	dsn := env.EnvConfig.DatabaseDNS
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", env.EnvConfig.DatabaseHost, env.EnvConfig.DatabaseUser, env.EnvConfig.DatabasePassword, env.EnvConfig.DatabaseName, env.EnvConfig.DatabasePort)
 	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
 		log.Println("Error connecting to database: ", err)

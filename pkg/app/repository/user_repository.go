@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/jackc/pgx/v5/pgconn"
@@ -47,9 +48,11 @@ func (u *userRepository) RegisterUser(ctx context.Context, userName string, pass
 		// Check if err is of type *pgconn.PgError and error code is 23505, which is the error code for unique_violation
 		if pgErr, ok := err.(*pgconn.PgError); ok && pgErr.Code == consts.UniqueViolation {
 			apm.CaptureError(ctx, fmt.Errorf("db error: %s", pgErr.Error())).Send()
+			log.Println("[UserRepository][RegisterUser] User already exists for this user: ", pgErr.Error())
 			return "", cerr.NewCustomErrorWithCodeAndOrigin("User already exists for this user", cerr.InvalidRequestErrorCode, err)
 		}
 		apm.CaptureError(ctx, fmt.Errorf("db error: %s", err.Error())).Send()
+		log.Println("[UserRepository][RegisterUser] Error in creating user: ", err)
 		return "", err
 	}
 
@@ -70,9 +73,11 @@ func (u *userRepository) GetUserByUserName(ctx context.Context, userName string)
 	if err := u.database.Where("user_name = ?", userName).First(&user).Error; err != nil {
 		if err == gorm.ErrRecordNotFound {
 			apm.CaptureError(ctx, fmt.Errorf("db error: %s", err.Error())).Send()
+			log.Println("[UserRepository][GetUserByUserName] User not found: ", err)
 			return nil, cerr.NewCustomErrorWithCodeAndOrigin("User not found", cerr.InvalidRequestErrorCode, err)
 		}
 		apm.CaptureError(ctx, fmt.Errorf("db error: %s", err.Error())).Send()
+		log.Println("[UserRepository][GetUserByUserName] Error in fetching user: ", err)
 		return nil, err
 	}
 	return &user, nil

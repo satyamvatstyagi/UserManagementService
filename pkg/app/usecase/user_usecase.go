@@ -35,6 +35,7 @@ func (u *userUsecase) RegisterUser(ctx context.Context, registerUserRequest *dom
 	// Encrypt the password
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(registerUserRequest.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Println("[UserUsecase][RegisterUser] Error in hashing the password: ", err)
 		return nil, err
 	}
 
@@ -44,6 +45,7 @@ func (u *userUsecase) RegisterUser(ctx context.Context, registerUserRequest *dom
 	// Call the repository
 	userID, err := u.userRepository.RegisterUser(ctx, registerUserRequest.UserName, string(hashedPassword))
 	if err != nil {
+		log.Println("[UserUsecase][RegisterUser] Error in RegisterUser: ", err)
 		return nil, err
 	}
 
@@ -59,17 +61,20 @@ func (u *userUsecase) LoginUser(ctx context.Context, loginUserRequest *domain.Lo
 	// Call the repository
 	user, err := u.userRepository.GetUserByUserName(ctx, loginUserRequest.UserName)
 	if err != nil {
+		log.Println("[UserUsecase][LoginUser] Error in GetUserByUserName: ", err)
 		return nil, err
 	}
 
 	// Compare the password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginUserRequest.Password)); err != nil {
+		log.Println("[UserUsecase][LoginUser] Error in CompareHashAndPassword: ", err)
 		return nil, err
 	}
 
 	// Generate the JWT token
 	token, err := jwt.GenerateToken(user.UUID.String(), user.CreatedAt)
 	if err != nil {
+		log.Println("[UserUsecase][LoginUser] Error in GenerateToken : ", err)
 		return nil, err
 	}
 
@@ -85,6 +90,7 @@ func (u *userUsecase) GetUserByUserName(ctx context.Context, getUserByUserNameRe
 	// Call the repository
 	user, err := u.userRepository.GetUserByUserName(ctx, getUserByUserNameRequest.UserName)
 	if err != nil {
+		log.Println("[UserUsecase][GetUserByUserName] Error in GetUserByUserName: ", err)
 		return nil, err
 	}
 
@@ -101,6 +107,7 @@ func (u *userUsecase) SendRequestToServer(ctx context.Context, url string, reque
 	// Create the request
 	req, err := http.NewRequest(http.MethodGet, url, bytes.NewBuffer(requestJson))
 	if err != nil {
+		log.Println("[UserUsecase][SendRequestToServer] Error in creating request: ", err)
 		return nil, err
 	}
 
@@ -122,11 +129,13 @@ func (u *userUsecase) SendRequestToServer(ctx context.Context, url string, reque
 	// Call the http client
 	res, err := u.httpClient.Do(req)
 	if err != nil {
+		log.Println("[UserUsecase][SendRequestToServer] Error in sending request: ", err)
 		return nil, err
 	}
 
 	// Check if the status code is 200
 	if res.StatusCode != http.StatusOK {
+		log.Println("[UserUsecase][SendRequestToServer] Recieved ", res.StatusCode, " code from client")
 		return nil, fmt.Errorf("recieved %d code from client", res.StatusCode)
 	}
 
@@ -134,7 +143,7 @@ func (u *userUsecase) SendRequestToServer(ctx context.Context, url string, reque
 	buf := new(bytes.Buffer)
 	_, err = buf.ReadFrom(res.Body)
 	if err != nil {
-		log.Println(err)
+		log.Println("[UserUsecase][SendRequestToServer] Error in reading response: ", err)
 		return nil, err
 	}
 
@@ -151,6 +160,7 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	// Check if the user exists
 	user, err := u.userRepository.GetUserByUserName(ctx, getOrderByOrderUserNameRequest.UserName)
 	if err != nil {
+		log.Println("[UserUsecase][GetOrderByOrderUserName] Error in GetUserByUserName: ", err)
 		return nil, err
 	}
 
@@ -184,12 +194,11 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	}
 	response := buf.Bytes()
 
-	//-------------------------------------------------------------------------------------------------------------------//
-
 	// Convert the response to struct
 	var orderResponse domain.GetOrderByOrderUserNameResponse
 	err = json.Unmarshal(response, &orderResponse)
 	if err != nil {
+		log.Println("[UserUsecase][GetOrderByOrderUserName] Error in unmarshalling response: ", err)
 		return nil, err
 	}
 

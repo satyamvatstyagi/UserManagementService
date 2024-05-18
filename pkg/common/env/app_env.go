@@ -15,7 +15,6 @@ type envConfigMap struct {
 	DatabaseName      string `required:"true" envconfig:"DATABASE_NAME"`
 	DatabaseHost      string `required:"true" envconfig:"DATABASE_HOST"`
 	DatabasePort      string `required:"true" envconfig:"DATABASE_PORT"`
-	DatabaseDNS       string `required:"true" envconfig:"DATABASE_DSN"`
 	GinMode           string `required:"true" envconfig:"GIN_MODE"`
 	ServicePort       string `required:"true" envconfig:"SERVICE_PORT"`
 	BasicAuthUser     string `required:"true" envconfig:"BASIC_AUTH_USER"`
