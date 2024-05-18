@@ -22,7 +22,6 @@ import (
 )
 
 func Setup() {
-
 	cerr := env.LoadConfig()
 	if cerr != nil {
 		log.Fatalf("Loadconfig failed, err=%s", cerr.Error())
