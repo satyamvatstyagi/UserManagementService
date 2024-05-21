@@ -6,6 +6,7 @@ type UserUsecase interface {
 	RegisterUser(ctx context.Context, registerUserRequest *RegisterUserRequest) (registerUserResponse *RegisterUserResponse, err error)
 	LoginUser(ctx context.Context, loginUserRequest *LoginUserRequest) (loginUserResponse *LoginUserResponse, err error)
 	GetUserByUserName(ctx context.Context, getUserByUserNameRequest *GetUserByUserNameRequest) (getUserByUserNameResponse *GetUserByUserNameResponse, err error)
+	Fibonacci(ctx context.Context, n int) (int, error)
 	SendRequestToServer(ctx context.Context, url string, requestJson []byte) (response []byte, err error)
 	GetOrderByOrderUserName(ctx context.Context, getOrderByOrderUserNameRequest *GetOrderByOrderUserNameRequest) (getOrderByOrderUserNameResponse *GetOrderByOrderUserNameResponse, err error)
 }
@@ -47,6 +48,9 @@ type GetOrderByOrderUserNameResponse struct {
 	OrderID     string `json:"order_id"`
 	ProductName string `json:"product_name"`
 	Quantity    int    `json:"quantity"`
+}
+type FibonacciRequest struct {
+	Number int `uri:"number" binding:"required,numeric,min=0"`
 }
 
 type Response struct {

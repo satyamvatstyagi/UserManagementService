@@ -8,24 +8,15 @@ definitions:
         example: false
         type: boolean
     type: object
-  domain.GetOrderByOrderUserNameResp:
+  domain.FibonacciResp:
     properties:
       data:
-        $ref: '#/definitions/domain.GetOrderByOrderUserNameResponse'
+        type: integer
       message:
         type: string
       success:
         example: true
         type: boolean
-    type: object
-  domain.GetOrderByOrderUserNameResponse:
-    properties:
-      order_id:
-        type: string
-      product_name:
-        type: string
-      quantity:
-        type: integer
     type: object
   domain.GetUserByUserNameResp:
     properties:
@@ -154,6 +145,39 @@ paths:
       summary: Get user by username
       tags:
       - user management service
+  /user/fibonacci:
+    get:
+      consumes:
+      - application/json
+      description: Calculate Fibonacci
+      parameters:
+      - description: Fibonacci Number
+        in: query
+        name: "n"
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Fibonacci Calculated Successfully
+          schema:
+            $ref: '#/definitions/domain.FibonacciResp'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Calculate Fibonacci
+      tags:
+      - user management service
   /user/health:
     get:
       consumes:
@@ -202,39 +226,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorResponse'
       summary: Login a user
-      tags:
-      - user management service
-  /user/order/{username}:
-    get:
-      consumes:
-      - application/json
-      description: Get order by order username
-      parameters:
-      - description: User Name
-        in: path
-        name: username
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Order Fetched Successfully
-          schema:
-            $ref: '#/definitions/domain.GetOrderByOrderUserNameResp'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      summary: Get order by order username
       tags:
       - user management service
   /user/register:

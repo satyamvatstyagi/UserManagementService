@@ -122,3 +122,36 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, domain.Response{Message: "User Fetched Successfully", Success: true, Data: *res})
 }
+
+// GetFibonacci godoc
+//
+//	@Summary		Calculate Fibonacci
+//	@Description	Calculate Fibonacci
+//	@Accept			json
+//	@Produce		json
+//	@Param			n	query		int						true	"Fibonacci Number"
+//	@Success		200	{object}	domain.FibonacciResp	"Fibonacci Calculated Successfully"
+//	@Failure		400	{object}	domain.ErrorResponse	"Invalid Request"
+//	@Failure		401	{object}	domain.ErrorResponse	"Unauthorized"
+//	@Failure		500	{object}	domain.ErrorResponse	"Internal Server Error"
+//	@Router			/user/fibonacci [get]
+//	@Tags			user management service
+func (c *UserController) GetFibonacci(ctx *gin.Context) {
+	var req domain.FibonacciRequest
+
+	if err := ctx.ShouldBindUri(&req); err != nil {
+		log.Println("[UserController][GetFibonacci] Error in ShouldBindUri: ", err)
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
+		return
+	}
+
+	// Call the usecase
+	res, err := c.UserUsecase.Fibonacci(ctx.Request.Context(), req.Number)
+	if err != nil {
+		log.Println("[UserController][GetFibonacci] Error in Fibonacci: ", err)
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, domain.Response{Message: "Fibonacci Calculated Successfully", Success: true, Data: res})
+}

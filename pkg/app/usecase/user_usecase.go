@@ -16,6 +16,7 @@ import (
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/restclient"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/utils"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -203,4 +204,13 @@ func (u *userUsecase) GetOrderByOrderUserName(ctx context.Context, getOrderByOrd
 	}
 
 	return &orderResponse, nil
+}
+
+func (u *userUsecase) Fibonacci(ctx context.Context, n int) (int, error) {
+	// Check if the input is valid
+	if n < 0 {
+		return -1, fmt.Errorf("invalid input")
+	}
+
+	return utils.Fibonacci(n), nil
 }
