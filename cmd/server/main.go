@@ -10,7 +10,7 @@ import (
 )
 
 //	@title			User Management Service
-//	@version		1.0
+//	@version		2.0
 //	@description	API for user management service which allows user to register, login and get user details.
 //	@schemes		https
 //	@host			localhost:8080
