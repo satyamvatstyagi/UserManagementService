@@ -122,35 +122,3 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, domain.Response{Message: "User Fetched Successfully", Success: true, Data: *res})
 }
-
-// GetOrderByOrderUserName godoc
-//
-//	@Summary		Get order by order username
-//	@Description	Get order by order username
-//	@Accept			json
-//	@Produce		json
-//	@Param			username	path		string								true	"User Name"
-//	@Success		200			{object}	domain.GetOrderByOrderUserNameResp	"Order Fetched Successfully"
-//	@Failure		400			{object}	domain.ErrorResponse				"Invalid Request"
-//	@Failure		401			{object}	domain.ErrorResponse				"Unauthorized"
-//	@Failure		500			{object}	domain.ErrorResponse				"Internal Server Error"
-//	@Router			/user/order/{username} [get]
-//	@Tags			user management service
-func (c *UserController) GetOrderByOrderUserName(ctx *gin.Context) {
-	var req domain.GetOrderByOrderUserNameRequest
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		log.Println("[UserController][GetOrderByOrderUserName] Error in ShouldBindUri: ", err)
-		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
-		return
-	}
-
-	// Call the usecase
-	res, err := c.UserUsecase.GetOrderByOrderUserName(ctx.Request.Context(), &req)
-	if err != nil {
-		log.Println("[UserController][GetOrderByOrderUserName] Error in GetOrderByOrderUserName: ", err)
-		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
-		return
-	}
-
-	ctx.JSON(http.StatusOK, domain.Response{Message: "Order Fetched Successfully", Success: true, Data: *res})
-}
