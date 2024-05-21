@@ -31,7 +31,7 @@ func (c *Config) InitDb() *gorm.DB {
 		connect = false
 		log.Println("Error migrating database: ", err)
 	}
-	//DropUnusedColumns(db, &models.User{})
+
 	if connect {
 		log.Printf("Database connected successfully to host: %s, port: %s, user: %s, dbname: %s", env.EnvConfig.DatabaseHost, env.EnvConfig.DatabasePort, env.EnvConfig.DatabaseUser, env.EnvConfig.DatabaseName)
 	} else {
@@ -40,29 +40,6 @@ func (c *Config) InitDb() *gorm.DB {
 
 	return db
 }
-
-// Removes any unsed column that exist when a mmodel struct field changes
-// func DropUnusedColumns(db *gorm.DB, models ...interface{}) {
-// 	for _, model := range models {
-// 		stmt := &gorm.Statement{DB: db}
-// 		stmt.Parse(model)
-// 		fields := stmt.Schema.Fields
-// 		columns, _ := db.Migrator().ColumnTypes(model)
-
-// 		for i := range columns {
-// 			found := false
-// 			for j := range fields {
-// 				if columns[i].Name() == fields[j].DBName {
-// 					found = true
-// 					break
-// 				}
-// 			}
-// 			if !found {
-// 				db.Migrator().DropColumn(model, columns[i].Name())
-// 			}
-// 		}
-// 	}
-// }
 
 // Function to initialize the logger
 func (c *Config) InitLogger() logger.Logger {
