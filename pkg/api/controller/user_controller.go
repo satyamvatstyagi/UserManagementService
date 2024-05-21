@@ -24,7 +24,7 @@ type UserController struct {
 //	@Router			/user/health [get]
 //	@Tags			user management service
 func (c *UserController) HealthCheck(ctx *gin.Context) {
-	ctx.JSON(http.StatusOK, domain.Response{Message: "Service is up and running", Success: true})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "User Management Service v1.0 is up and running", Success: true})
 }
 
 // RegisterUser godoc
