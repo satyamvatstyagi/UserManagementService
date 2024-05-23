@@ -2,9 +2,9 @@ package middlewares
 
 import (
 	"net/http"
-	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 )
 
@@ -20,7 +20,7 @@ func ValidateToken() gin.HandlerFunc {
 		}
 
 		// Get the jwt secret from the environment variable
-		jwtSecret := os.Getenv("JWT_SECRET")
+		jwtSecret := env.EnvConfig.JWTSecretKey
 		if jwtSecret == "" {
 			ctx.JSON(http.StatusUnauthorized, gin.H{"message": "jwt secret not set"})
 			ctx.Abort()

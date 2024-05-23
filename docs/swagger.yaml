@@ -1,0 +1,267 @@
+basePath: /user
+definitions:
+  domain.ErrorResponse:
+    properties:
+      message:
+        type: string
+      success:
+        example: false
+        type: boolean
+    type: object
+  domain.FibonacciResp:
+    properties:
+      data:
+        type: integer
+      message:
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  domain.GetUserByUserNameResp:
+    properties:
+      data:
+        $ref: '#/definitions/domain.GetUserByUserNameResponse'
+      message:
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  domain.GetUserByUserNameResponse:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      updated_at:
+        type: string
+      user_name:
+        type: string
+    type: object
+  domain.LoginSuccessResp:
+    properties:
+      data:
+        $ref: '#/definitions/domain.LoginUserResponse'
+      message:
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  domain.LoginUserRequest:
+    properties:
+      password:
+        type: string
+      user_name:
+        type: string
+    required:
+    - password
+    - user_name
+    type: object
+  domain.LoginUserResponse:
+    properties:
+      token:
+        type: string
+    type: object
+  domain.RegisterUserRequest:
+    properties:
+      password:
+        type: string
+      user_name:
+        type: string
+    required:
+    - password
+    - user_name
+    type: object
+  domain.RegisterUserResp:
+    properties:
+      data:
+        $ref: '#/definitions/domain.RegisterUserResponse'
+      message:
+        type: string
+      success:
+        example: true
+        type: boolean
+    type: object
+  domain.RegisterUserResponse:
+    properties:
+      user_id:
+        type: string
+    type: object
+  domain.Response:
+    properties:
+      data:
+        description: Data is the data returned in the response.
+      error_code:
+        description: ErrorCode is an integer value indicating the error code.
+        type: integer
+      message:
+        description: Message is a string message returned in the response.
+        type: string
+      success:
+        description: Success is a boolean value indicating whether the request was
+          successful or not.
+        type: boolean
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API for user management service which allows user to register, login
+    and get user details.
+  title: User Management Service
+  version: "2.0"
+paths:
+  /user/{username}:
+    get:
+      consumes:
+      - application/json
+      description: Get user by username
+      parameters:
+      - description: User Name
+        in: path
+        name: username
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Fetched Successfully
+          schema:
+            $ref: '#/definitions/domain.GetUserByUserNameResp'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Get user by username
+      tags:
+      - user management service
+  /user/fibonacci:
+    get:
+      consumes:
+      - application/json
+      description: Calculate Fibonacci
+      parameters:
+      - description: Fibonacci Number
+        in: query
+        name: "n"
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Fibonacci Calculated Successfully
+          schema:
+            $ref: '#/definitions/domain.FibonacciResp'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Calculate Fibonacci
+      tags:
+      - user management service
+  /user/health:
+    get:
+      consumes:
+      - application/json
+      description: Health Check will return a message indicating that the user management
+        service is up and running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Service is up and running
+          schema:
+            $ref: '#/definitions/domain.Response'
+      summary: Health Check
+      tags:
+      - user management service
+  /user/login:
+    post:
+      consumes:
+      - application/json
+      description: Login a user
+      parameters:
+      - description: User Details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.LoginUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Logged In Successfully
+          schema:
+            $ref: '#/definitions/domain.LoginSuccessResp'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Login a user
+      tags:
+      - user management service
+  /user/register:
+    post:
+      consumes:
+      - application/json
+      description: Register a new user
+      parameters:
+      - description: User Details
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/domain.RegisterUserRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User Registered Successfully
+          schema:
+            $ref: '#/definitions/domain.RegisterUserResp'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - user management service
+schemes:
+- https
+swagger: "2.0"

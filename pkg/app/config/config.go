@@ -1,10 +1,13 @@
 package config
 
 import (
+	"fmt"
 	"log"
-	"os"
+	"strings"
 
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/models"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/consts"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/env"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -13,71 +16,39 @@ import (
 type Config struct{}
 
 func (c *Config) InitDb() *gorm.DB {
-	dsn := os.Getenv("DB_DSN")
-	db, err := gorm.Open(postgres.Open(dsn))
+	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%s sslmode=disable", env.EnvConfig.DatabaseHost, env.EnvConfig.DatabaseUser, env.EnvConfig.DatabasePassword, env.EnvConfig.DatabaseName, env.EnvConfig.DatabasePort)
+	log.Println("Connecting to database: ", dsn)
 
+	connect := true
+	db, err := gorm.Open(postgres.Open(dsn))
 	if err != nil {
-		log.Fatal(err)
+		connect = false
+		log.Println("Error connecting to database: ", err)
 	}
 
-	db.AutoMigrate(&models.User{})
-	DropUnusedColumns(db, &models.User{})
+	err = db.AutoMigrate(&models.User{})
+	if err != nil {
+		connect = false
+		log.Println("Error migrating database: ", err)
+	}
+
+	if connect {
+		log.Printf("Database connected successfully to host: %s, port: %s, user: %s, dbname: %s", env.EnvConfig.DatabaseHost, env.EnvConfig.DatabasePort, env.EnvConfig.DatabaseUser, env.EnvConfig.DatabaseName)
+	} else {
+		log.Println("Database connection failed")
+	}
 
 	return db
 }
 
-// Removes any unsed column that exist when a mmodel struct field changes
-func DropUnusedColumns(db *gorm.DB, models ...interface{}) {
-	for _, model := range models {
-		stmt := &gorm.Statement{DB: db}
-		stmt.Parse(model)
-		fields := stmt.Schema.Fields
-		columns, _ := db.Migrator().ColumnTypes(model)
-
-		for i := range columns {
-			found := false
-			for j := range fields {
-				if columns[i].Name() == fields[j].DBName {
-					found = true
-					break
-				}
-			}
-			if !found {
-				db.Migrator().DropColumn(model, columns[i].Name())
-			}
-		}
-	}
-}
-
 // Function to initialize the logger
-func (c *Config) InitLogger() *logger.MtnLogger {
-	fileName := os.Getenv("LOG_FILE_NAME")
+func (c *Config) InitLogger() logger.Logger {
 
-	// If the LOG_FILE_NAME environment variable is not set, set it to "app.log"
-	if fileName == "" {
-		fileName = "app.log"
-	}
+	fileName := strings.ToLower(consts.AppName) + ".log"
 
-	// Check if "log" directory exists in the current directory
-	if _, err := os.Stat("log"); os.IsNotExist(err) {
-		// Create the directory
-		err := os.Mkdir("log", 0755)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
+	// Create the log file path
+	filePath := env.EnvConfig.LogFilePath + "/" + fileName
 
-	// Check if the file exists in the "log" directory
-	filePath := "log/" + fileName
-	if _, err := os.Stat(filePath); os.IsNotExist(err) {
-		// Create the file
-		file, err := os.Create(filePath)
-		if err != nil {
-			log.Fatal(err)
-		}
-		file.Close()
-	}
-	
 	logger, err := logger.NewMtnLogger(filePath)
 	if err != nil {
 		log.Fatal(err)
