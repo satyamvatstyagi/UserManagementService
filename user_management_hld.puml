@@ -1,0 +1,46 @@
+"@startuml Sequence Diagram for User's Order data"
+actor User
+database "User Database" as UDB
+
+autonumber
+
+group User Management Service flow
+  User -> UMSController: Send request
+  activate UMSController
+  UMSController -> UMSUseCase: Get user's order data
+  activate UMSUseCase
+  UMSUseCase -> UMSRepository: Retrieve user data
+  activate UMSRepository
+  UMSRepository --> UMSUseCase: User data
+  UMSRepository --> UDB: Get user data
+  activate UDB
+    UDB --> UMSRepository: User data
+  deactivate UDB
+  deactivate UMSRepository
+  group Order Management Service
+    UMSUseCase -> OMSController: Get order data
+    activate OMSController
+    OMSController -> OMSUseCase: Get order data
+    activate OMSUseCase
+    OMSUseCase -> OMSRepository: Retrieve order data
+    OMSRepository --> ODB: Get order data
+    activate ODB
+    ODB --> OMSRepository: Order data
+    deactivate ODB
+    activate OMSRepository
+    OMSRepository --> OMSUseCase: Order data
+    deactivate OMSRepository
+    OMSUseCase --> OMSController: Order data
+    deactivate OMSUseCase
+    OMSController --> UMSUseCase: Order data
+    deactivate OMSController
+  end
+  UMSUseCase --> UMSController: User's order data
+  deactivate UMSUseCase
+  UMSController --> UMS: Order data
+  deactivate UMSController
+  UMS --> User: User's order data
+end
+
+
+@enduml
