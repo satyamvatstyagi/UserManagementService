@@ -1,75 +1,68 @@
 # User Management Service
 
-## Table of Contents
-- [Introduction](#introduction)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+## Description
 
-## Introduction
-The User Management Service is a service that allows you to manage users in your application. It provides functionality for user registration, login, and other user-related operations.
+The User Management Service is a GoLang service that provides functionality for managing user accounts.
 
 ## Features
-- User registration
-- User login
-- User profile management
-- Password reset
-- User roles and permissions
+
+- Health Check Endpoint: `/user/health`
+- User Registration Endpoint: `/user/register`
+- User Login Endpoint: `/user/login`
+- Get User by Username Endpoint: `/user/{username}`
+- Get Fibonacci Number Endpoint: `/user/fibonacci/{number}`
 
 ## Installation
-To install and run the User Management Service, follow these steps:
 
 1. Clone the repository:
+
      ```bash
-     git clone https://github.com/your-username/user-management-service.git
+     https://github.com/satyamvatstyagi/UserManagementService.git
      ```
 
-2. Install dependencies:
+2. Install the dependencies:
+
      ```bash
-     cd user-management-service
-     npm install
+     go mod download
      ```
 
-3. Configure the database:
-     - Create a new database in your preferred database management system.
-     - Update the database configuration in the `.env` file.
+3. Build the service:
 
-4. Start the service:
      ```bash
-     npm start
+     go build
      ```
 
 ## Usage
-To use the User Management Service in your application, you can make API requests to the exposed endpoints. Here are some examples:
 
-- Register a new user:
-    ```http
-    POST /user/register
-    Content-Type: application/json
+1. Start the service:
 
-    {
-       "user_name":"satyamvats3",
-       "password":"password"
-    }
-    ```
+     ```bash
+     ./user-management-service
+     ```
 
-- Login:
-    ```http
-    POST /user/login
-    Content-Type: application/json
+2. Access the service API at `http://localhost:8080`.
 
-    {
-        "user_name":"satyamvats3",
-        "password":"password"
-    }
-    ```
+## Configuration
 
-For more detailed documentation, please refer to the [API documentation](/docs/api.md).
+The service can be configured using environment variables. The following variables are available:
+
+- `DATABASE_USER`: The username for the database connection.
+- `DATABASE_PASSWORD`: The password for the database connection.
+- `DATABASE_NAME`: The name of the database.
+- `DATABASE_HOST`: The host of the database.
+- `DATABASE_PORT`: The port of the database.
+- `SERVER_PORT`: The port for the server to listen on.
+- `GIN_MODE`: The mode for the Gin framework.
+- `BASIC_AUTH_USER`: The username for basic authentication.
+- `BASIC_AUTH_PASSWORD`: The password for basic authentication.
+- `JWT_SECRET`: The secret key used for JWT token generation.
+- `JWT_EXPIRY`: The expiry time for JWT tokens in minutes.
+- `LOG_FILE_NAME`: The name of the log file.
 
 ## Contributing
-Contributions are welcome! If you have any ideas, suggestions, or bug reports, please open an issue or submit a pull request.
+
+Contributions are welcome! Please read the [contribution guidelines](CONTRIBUTING.md) for more information.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+
+This project is licensed under the [SATYAM License](LICENSE).
