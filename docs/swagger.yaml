@@ -8,16 +8,6 @@ definitions:
         example: false
         type: boolean
     type: object
-  domain.FibonacciResp:
-    properties:
-      data:
-        type: integer
-      message:
-        type: string
-      success:
-        example: true
-        type: boolean
-    type: object
   domain.GetUserByUserNameResp:
     properties:
       data:
@@ -104,6 +94,13 @@ definitions:
           successful or not.
         type: boolean
     type: object
+  domain.TokenValidationRequest:
+    properties:
+      token:
+        type: string
+    required:
+    - token
+    type: object
 host: localhost:8080
 info:
   contact: {}
@@ -143,39 +140,6 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorResponse'
       summary: Get user by username
-      tags:
-      - user management service
-  /user/fibonacci:
-    get:
-      consumes:
-      - application/json
-      description: Calculate Fibonacci
-      parameters:
-      - description: Fibonacci Number
-        in: query
-        name: "n"
-        required: true
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: Fibonacci Calculated Successfully
-          schema:
-            $ref: '#/definitions/domain.FibonacciResp'
-        "400":
-          description: Invalid Request
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "401":
-          description: Unauthorized
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/domain.ErrorResponse'
-      summary: Calculate Fibonacci
       tags:
       - user management service
   /user/health:
@@ -260,6 +224,40 @@ paths:
           schema:
             $ref: '#/definitions/domain.ErrorResponse'
       summary: Register a new user
+      tags:
+      - user management service
+  /user/validate-token:
+    post:
+      consumes:
+      - application/json
+      description: Validates a JWT token passed in the request body
+      parameters:
+      - description: Token Payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/domain.TokenValidationRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Token is valid
+          schema:
+            $ref: '#/definitions/domain.Response'
+        "400":
+          description: Invalid Request
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "401":
+          description: Invalid or missing token
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/domain.ErrorResponse'
+      summary: Validate JWT token
       tags:
       - user management service
 schemes:

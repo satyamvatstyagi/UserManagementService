@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/app/domain"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/cerr"
+	"github.com/satyamvatstyagi/UserManagementService/pkg/common/jwt"
 	"github.com/satyamvatstyagi/UserManagementService/pkg/common/logger"
 )
 
@@ -125,35 +126,30 @@ func (c *UserController) GetUserByUserName(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, domain.Response{Message: "User Fetched Successfully", Success: true, Data: *res})
 }
 
-// GetFibonacci godoc
+// ValidateToken godoc
 //
-//	@Summary		Calculate Fibonacci
-//	@Description	Calculate Fibonacci
+//	@Summary		Validate JWT token
+//	@Description	Validates a JWT token passed in the request body
 //	@Accept			json
 //	@Produce		json
-//	@Param			n	query		int						true	"Fibonacci Number"
-//	@Success		200	{object}	domain.FibonacciResp	"Fibonacci Calculated Successfully"
-//	@Failure		400	{object}	domain.ErrorResponse	"Invalid Request"
-//	@Failure		401	{object}	domain.ErrorResponse	"Unauthorized"
-//	@Failure		500	{object}	domain.ErrorResponse	"Internal Server Error"
-//	@Router			/user/fibonacci [get]
+//	@Param			request	body		domain.TokenValidationRequest	true	"Token Payload"
+//	@Success		200		{object}	domain.Response	"Token is valid"
+//	@Failure		400		{object}	domain.ErrorResponse	"Invalid Request"
+//	@Failure		401		{object}	domain.ErrorResponse	"Invalid or missing token"
+//	@Failure		500		{object}	domain.ErrorResponse	"Internal Server Error"
+//	@Router			/user/validate-token [post]
 //	@Tags			user management service
-func (c *UserController) GetFibonacci(ctx *gin.Context) {
-	var req domain.FibonacciRequest
-
-	if err := ctx.ShouldBindUri(&req); err != nil {
-		log.Println("[UserController][GetFibonacci] Error in ShouldBindUri: ", err)
-		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid Request", Success: false})
+func (c *UserController) ValidateToken(ctx *gin.Context) {
+	var req domain.TokenValidationRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, domain.Response{Message: "Invalid request", Success: false})
 		return
 	}
 
-	// Call the usecase
-	res, err := c.UserUsecase.Fibonacci(ctx.Request.Context(), req.Number)
-	if err != nil {
-		log.Println("[UserController][GetFibonacci] Error in Fibonacci: ", err)
-		ctx.JSON(http.StatusBadRequest, domain.Response{Message: cerr.GetErrorMessage(err), Success: false})
+	if err := jwt.ValidateToken(req.Token); err != nil {
+		ctx.JSON(http.StatusUnauthorized, domain.Response{Message: err.Error(), Success: false})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, domain.Response{Message: "Fibonacci Calculated Successfully", Success: true, Data: res})
+	ctx.JSON(http.StatusOK, domain.Response{Message: "Token is valid", Success: true})
 }

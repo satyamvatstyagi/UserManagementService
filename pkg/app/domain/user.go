@@ -63,3 +63,7 @@ type Response struct {
 	// Data is the data returned in the response.
 	Data interface{} `json:"data,omitempty"`
 }
+
+type TokenValidationRequest struct {
+	Token string `json:"token" binding:"required"`
+}

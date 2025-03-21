@@ -15,56 +15,6 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/user/fibonacci": {
-            "get": {
-                "description": "Calculate Fibonacci",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user management service"
-                ],
-                "summary": "Calculate Fibonacci",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "Fibonacci Number",
-                        "name": "n",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Fibonacci Calculated Successfully",
-                        "schema": {
-                            "$ref": "#/definitions/domain.FibonacciResp"
-                        }
-                    },
-                    "400": {
-                        "description": "Invalid Request",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
-                        }
-                    },
-                    "401": {
-                        "description": "Unauthorized",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/domain.ErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
         "/user/health": {
             "get": {
                 "description": "Health Check will return a message indicating that the user management service is up and running",
@@ -192,6 +142,58 @@ const docTemplate = `{
                 }
             }
         },
+        "/user/validate-token": {
+            "post": {
+                "description": "Validates a JWT token passed in the request body",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "user management service"
+                ],
+                "summary": "Validate JWT token",
+                "parameters": [
+                    {
+                        "description": "Token Payload",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.TokenValidationRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Token is valid",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Request",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid or missing token",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/domain.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/user/{username}": {
             "get": {
                 "description": "Get user by username",
@@ -253,21 +255,6 @@ const docTemplate = `{
                 "success": {
                     "type": "boolean",
                     "example": false
-                }
-            }
-        },
-        "domain.FibonacciResp": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "integer"
-                },
-                "message": {
-                    "type": "string"
-                },
-                "success": {
-                    "type": "boolean",
-                    "example": true
                 }
             }
         },
@@ -396,6 +383,17 @@ const docTemplate = `{
                 "success": {
                     "description": "Success is a boolean value indicating whether the request was successful or not.",
                     "type": "boolean"
+                }
+            }
+        },
+        "domain.TokenValidationRequest": {
+            "type": "object",
+            "required": [
+                "token"
+            ],
+            "properties": {
+                "token": {
+                    "type": "string"
                 }
             }
         }

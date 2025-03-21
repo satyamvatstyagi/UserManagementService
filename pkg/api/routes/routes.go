@@ -87,6 +87,6 @@ func setupRoutes(router *gin.Engine) {
 		userService.POST("/register", middlewares.LoggingMiddleware(logger), userController.RegisterUser)
 		userService.POST("/login", middlewares.LoggingMiddleware(logger), userController.LoginUser)
 		userService.GET("/:username", middlewares.LoggingMiddleware(logger), userController.GetUserByUserName)
-		userService.GET("/fibonacci/:number", middlewares.LoggingMiddleware(logger), userController.GetFibonacci)
+		userService.POST("/validate-token", middlewares.LoggingMiddleware(logger), userController.ValidateToken)
 	}
 }
